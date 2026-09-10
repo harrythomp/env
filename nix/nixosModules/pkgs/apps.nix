@@ -32,7 +32,6 @@ in
         file-roller
         seahorse
         gittyup
-        bottles
         warehouse
         mysql-workbench
         xournalpp
@@ -42,6 +41,7 @@ in
         chromium
     ] ++ (with unstable-pkgs; [
         ghostty
+        bottles
     ]);
 
 }
