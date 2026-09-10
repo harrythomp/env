@@ -20,6 +20,8 @@ inputs: { pkgs, ... }:
         azahar
         olympus
         moonlight-qt
+        protonup-qt
+        protontricks
     ];
 
 }
