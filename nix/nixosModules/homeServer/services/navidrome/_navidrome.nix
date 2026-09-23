@@ -6,7 +6,7 @@ let
     cfg = config.env.homeServer.services.navidrome;
     homeServerUser = config.env.homeServer.user;
     homeServerGroup = config.users.users.${homeServerUser}.group;
-    navidromeTag = "0.62.0";
+    navidromeTag = "0.64.1";
 in
 {
     options.env.homeServer.services.navidrome = {

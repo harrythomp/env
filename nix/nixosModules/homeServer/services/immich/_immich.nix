@@ -6,7 +6,7 @@ let
     cfg = config.env.homeServer.services.immich;
     homeServerUser = config.env.homeServer.user;
     homeServerGroup = config.users.users.${homeServerUser}.group;
-    immichTag = "v2.7.5";
+    immichTag = "v3.2.2";
 in
 {
     options.env.homeServer.services.immich = {

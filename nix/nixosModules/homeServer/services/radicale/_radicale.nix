@@ -6,7 +6,7 @@ let
     cfg = config.env.homeServer.services.radicale;
     homeServerUser = config.env.homeServer.user;
     homeServerGroup = config.users.users.${homeServerUser}.group;
-    radicaleTag = "3.7.3.0";
+    radicaleTag = "3.8.0.0";
 in
 {
     options.env.homeServer.services.radicale = {
