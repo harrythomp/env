@@ -43,3 +43,5 @@ transparent_tabline()
 vim.api.nvim_create_autocmd("ColorScheme", {
     callback = transparent_tabline,
 })
+
+vim.filetype.add({ extension = { templ = "templ" } })
