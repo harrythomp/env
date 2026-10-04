@@ -1,9 +1,16 @@
 inputs: { pkgs, ... }:
 
+let
+    unstable-pkgs = import inputs.nixpkgs-unstable {
+        system = pkgs.stdenv.hostPlatform.system;
+        config.allowUnfree = true;
+    };
+in
 {
 
     programs.steam = {
         enable = true;
+        package = unstable-pkgs.steam;
         remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
         dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     };
