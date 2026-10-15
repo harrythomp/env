@@ -41,7 +41,6 @@ in
         smartmontools
         chafa
         ffmpeg
-        opencode
         socat
         ascii
         compose2nix
@@ -50,6 +49,7 @@ in
     ] ++ [
         session
     ] ++ (with unstable-pkgs; [
+        opencode
         neovim
     ]);
 
