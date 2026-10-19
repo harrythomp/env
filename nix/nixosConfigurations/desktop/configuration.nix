@@ -12,14 +12,16 @@
         self.nixosModules.default
 
         self.nixosModules.memlock
-        self.nixosModules.sunshine
+        self.nixosModules.moonshine
     ];
 
-    env.homeServer = {
-        user = "harry";
-
-        services = {
-            syncthing.enable = true;
+    env = {
+        moonshine.user = "harry";
+        homeServer = {
+            user = "harry";
+            services = {
+                syncthing.enable = true;
+            };
         };
     };
 

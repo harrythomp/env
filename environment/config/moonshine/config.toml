@@ -1,0 +1,14 @@
+[[application]]
+title = "Steam"
+command = ["steam", "steam://open/bigpicture"]
+steam_integration = true
+
+[[application_scanner]]
+type = "steam"
+library = "$HOME/.local/share/Steam"
+command = ["steam", "-bigpicture", "steam://rungameid/{game_id}"]
+
+[[application]]
+title = "RPCS3"
+command = ["dbus-run-session", "--", "flatpak", "run", "net.rpcs3.RPCS3"]
+steam_integration = true
