@@ -3,6 +3,12 @@ title = "Steam"
 command = ["steam", "steam://open/bigpicture"]
 steam_integration = true
 
+# Doesn't work???
+# [[application]]
+# title = "Desktop"
+# command = ["niri"]
+# steam_integration = true
+
 [[application_scanner]]
 type = "steam"
 library = "$HOME/.local/share/Steam"
