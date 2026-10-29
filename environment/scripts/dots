@@ -72,6 +72,7 @@ switch () {
 
     cp "$MY_CONFIG/zshrc" "$HOME/.zshrc"
     cp "$MY_CONFIG/bashrc" "$HOME/.bashrc"
+    cp "$MY_CONFIG/user-dirs.dirs" "$XDG_CONFIG_HOME/user-dirs.dirs"
 
     apply-overlay "$MY_HOSTS/$HOST"
     if [ -n "$OVERLAY" ]; then
