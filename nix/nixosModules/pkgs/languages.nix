@@ -12,7 +12,6 @@ inputs: { pkgs, ... }:
         mysql84
         typescript
         nodejs_22
-        bun
         jdk
         erlang_27
         gcc
