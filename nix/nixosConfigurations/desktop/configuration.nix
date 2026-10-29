@@ -1,4 +1,4 @@
-{ self, ... }:
+{ self, ... }: { config, ... };
 
 {
 
@@ -20,7 +20,10 @@
         homeServer = {
             user = "harry";
             services = {
-                syncthing.enable = true;
+                syncthing = {
+                    enable = true;
+                    serviceLocation = config.users.users.${config.env.homeServer.user}.home;
+                };
             };
         };
     };

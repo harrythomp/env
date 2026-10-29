@@ -6,6 +6,8 @@ let
     syncthingUser = config.services.syncthing.user;
     syncthingUserGroup = config.users.users.${syncthingUser}.group;
     syncthingUserHome = config.users.users.${syncthingUser}.home;
+    allDevices = builtins.attrNames config.services.syncthing.settings.devices;
+    enableFor = devices: builtins.elem config.networking.hostName devices;
 in
 {
 
@@ -54,9 +56,40 @@ in
                     };
                 };
                 folders = {
-                    sync = {
-                        path = "${cfg.serviceLocation}/sync";
-                        devices = [ "desktop" "laptop" "pi" ];
+                    books = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/books";
+                        devices = allDevices;
+                    };
+                    dev = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/dev";
+                        devices = allDevices;
+                    };
+                    documents = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/documents";
+                        devices = allDevices;
+                    };
+                    games = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/games";
+                        devices = allDevices;
+                    };
+                    music = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/music";
+                        devices = allDevices;
+                    };
+                    pictures = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/pictures";
+                        devices = allDevices;
+                    };
+                    work = {
+                        enable = enableFor allDevices;
+                        path = "${cfg.serviceLocation}/work";
+                        devices = allDevices;
                     };
                 };
                 options = {
