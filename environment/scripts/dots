@@ -52,6 +52,13 @@ apply-overlay () {
 }
 
 switch () {
+    if ! [ -d "$CONFIG_TARGET" ]; then
+        mkdir -p "$CONFIG_TARGET"
+    fi
+    if ! [ -d "$SCRIPTS_TARGET" ]; then
+        mkdir -p "$SCRIPTS_TARGET"
+    fi
+
     vicinae_running=$(pgrep vicinae)
     noctalia_running=$(pgrep noctalia)
 
