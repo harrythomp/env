@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-MY_ENV=${MY_ENV:-"$HOME/env"}
-MY_OVERLAYS=${MY_OVERLAYS:-"$MY_ENV/environment/overlays"}
+SOURCE=${SOURCE:-"$HOME/env"}
+OVERLAYS_SOURCE=${OVERLAYS_SOURCE:-"$SOURCE/environment/overlays"}
 
-overlay_names="$(find "$MY_OVERLAYS" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort)"
+overlay_names="$(find "$OVERLAYS_SOURCE" -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | sort)"
 
 overlay="$(echo "$overlay_names" | head -c -1 | selector "Select overlay...")"
 

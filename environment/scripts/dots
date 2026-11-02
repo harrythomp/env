@@ -1,20 +1,28 @@
 #!/usr/bin/env bash
 
-MY_ENV=${MY_ENV:-"$HOME/env"}
-XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-"$HOME/.config"}
-MY_CONFIG=${MY_CONFIG:-"$MY_ENV/environment/config"}
-SCRIPTS_HOME=${SCRIPTS_HOME:-"$HOME/.local/scripts"}
-MY_SCRIPTS=${MY_SCRIPTS:-"$MY_ENV/environment/scripts"}
-MY_HOSTS=${MY_HOSTS:-"$MY_ENV/environment/hosts"}
+SOURCE=${SOURCE:-"$HOME/env"}
+TARGET=${TARGET:-"$HOME"}
+
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-"$TARGET/.config"}
+
+CONFIG_SOURCE=${CONFIG_SOURCE:-"$SOURCE/environment/config"}
+CONFIG_TARGET=${CONFIG_TARGET:-"$XDG_CONFIG_HOME"}
+
+SCRIPTS_SOURCE=${SCRIPTS_SOURCE:-"$SOURCE/environment/scripts"}
+SCRIPTS_TARGET=${SCRIPTS_TARGET:-"$TARGET/.local/scripts"}
+
+HOSTS_SOURCE=${HOSTS_SOURCE:-"$SOURCE/environment/hosts"}
 HOST=${HOST:-$(hostname)}
-MY_OVERLAYS=${MY_OVERLAYS:-"$MY_ENV/environment/overlays"}
-MY_WALLPAPERS=${MY_WALLPAPERS:-"$MY_ENV/wallpaper"}
+
+OVERLAYS_SOURCE=${OVERLAYS_SOURCE:-"$SOURCE/environment/overlays"}
+
+WALLPAPERS_SOURCE=${WALLPAPERS_SOURCE:-"$SOURCE/wallpaper"}
 
 if [ -z "$OVERLAY" ]; then
-    if [ -f "$MY_OVERLAYS/$HOST" ]; then
-        OVERLAY=$(<"$MY_OVERLAYS/$HOST")
+    if [ -f "$OVERLAYS_SOURCE/$HOST" ]; then
+        OVERLAY=$(<"$OVERLAYS_SOURCE/$HOST")
     else
-        OVERLAY=$(<"$MY_OVERLAYS/current")
+        OVERLAY=$(<"$OVERLAYS_SOURCE/current")
     fi
 fi
 
@@ -34,10 +42,10 @@ apply-overlay () {
         after=${file#"$selection/"}
         base=$(basename "$file")
         if [[ $base == "extension."* ]]; then
-            newfile="$XDG_CONFIG_HOME/${after%"$base"}${base#"extension."}"
+            newfile="$CONFIG_TARGET/${after%"$base"}${base#"extension."}"
             cat "$file" >> "$newfile"
         else
-            newfile="$XDG_CONFIG_HOME/$after"
+            newfile="$CONFIG_TARGET/$after"
             cp "$file" "$newfile"
         fi
     done
@@ -55,28 +63,28 @@ switch () {
         kill -STOP "$noctalia_running"
     fi
 
-    move "$MY_SCRIPTS" "$SCRIPTS_HOME"
-    chmod -R +x "$SCRIPTS_HOME"
+    move "$SCRIPTS_SOURCE" "$SCRIPTS_TARGET"
+    chmod -R +x "$SCRIPTS_TARGET"
 
-    find "$MY_CONFIG" -maxdepth 1 -mindepth 1 -type d | while read -r config; do
+    find "$CONFIG_SOURCE" -maxdepth 1 -mindepth 1 -type d | while read -r config; do
         base=$(basename "$config")
-        move "$config" "$XDG_CONFIG_HOME/$base"
+        move "$config" "$CONFIG_TARGET/$base"
     done
 
-    if [ -f "$XDG_CONFIG_HOME/session/default-session" ]; then
-        chmod +x "$XDG_CONFIG_HOME/session/default-session"
+    if [ -f "$CONFIG_TARGET/session/default-session" ]; then
+        chmod +x "$CONFIG_TARGET/session/default-session"
     fi
-    if [ -d "$XDG_CONFIG_HOME/session/scripts" ]; then
-        chmod -R +x "$XDG_CONFIG_HOME/session/scripts"
+    if [ -d "$CONFIG_TARGET/session/scripts" ]; then
+        chmod -R +x "$CONFIG_TARGET/session/scripts"
     fi
 
-    cp "$MY_CONFIG/zshrc" "$HOME/.zshrc"
-    cp "$MY_CONFIG/bashrc" "$HOME/.bashrc"
-    cp "$MY_CONFIG/user-dirs.dirs" "$XDG_CONFIG_HOME/user-dirs.dirs"
+    cp "$CONFIG_SOURCE/zshrc" "$TARGET/.zshrc"
+    cp "$CONFIG_SOURCE/bashrc" "$TARGET/.bashrc"
+    cp "$CONFIG_SOURCE/user-dirs.dirs" "$CONFIG_TARGET/user-dirs.dirs"
 
-    apply-overlay "$MY_HOSTS/$HOST"
+    apply-overlay "$HOSTS_SOURCE/$HOST"
     if [ -n "$OVERLAY" ]; then
-        apply-overlay "$MY_OVERLAYS/$OVERLAY"
+        apply-overlay "$OVERLAYS_SOURCE/$OVERLAY"
     fi
 
     if [ -n "$noctalia_running" ]; then
@@ -103,12 +111,12 @@ backcopy () {
     done
 
     if [ -n "$overlay" ]; then
-        to="$MY_OVERLAYS/$OVERLAY/$config"
+        to="$OVERLAYS_SOURCE/$OVERLAY/$config"
     else
-        to="$MY_CONFIG/$config"
+        to="$CONFIG_SOURCE/$config"
     fi
 
-    from="$XDG_CONFIG_HOME/$config"
+    from="$CONFIG_TARGET/$config"
     move "$from" "$to"
 }
 
@@ -138,11 +146,11 @@ set-theme () {
     done
 
     if [ -z "$wallpaper" ]; then
-        wallpaper="$MY_WALLPAPERS/$(<"$XDG_CONFIG_HOME/theme/wallpaper")"
+        wallpaper="$WALLPAPERS_SOURCE/$(<"$CONFIG_TARGET/theme/wallpaper")"
     fi
 
     if [ -z "$colour" ]; then
-        colour=$(<"$XDG_CONFIG_HOME/theme/colour")
+        colour=$(<"$CONFIG_TARGET/theme/colour")
     fi
 
     if command -v matugen &> /dev/null; then

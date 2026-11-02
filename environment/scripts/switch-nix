@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
-MY_ENV=${MY_ENV:-"$HOME/env"}
+SOURCE=${SOURCE:-"$HOME/env"}
 
 current_generation=$(readlink /nix/var/nix/profiles/system | cut -d - -f2)
 
-if ! sudo nixos-rebuild switch --flake "$MY_ENV"; then
+if ! sudo nixos-rebuild switch --flake "$SOURCE"; then
     exit 1
 fi
 
 new_generation=$(readlink /nix/var/nix/profiles/system | cut -d - -f2)
 
-pushd "$MY_ENV" > /dev/null || exit 1
+pushd "$SOURCE" > /dev/null || exit 1
 if [ "$current_generation" != "$new_generation" ]; then
     git add -A
     git commit -m "$new_generation $1"
