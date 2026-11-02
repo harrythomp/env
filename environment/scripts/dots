@@ -51,23 +51,12 @@ apply-overlay () {
     done
 }
 
-switch () {
+copy () {
     if ! [ -d "$CONFIG_TARGET" ]; then
         mkdir -p "$CONFIG_TARGET"
     fi
     if ! [ -d "$SCRIPTS_TARGET" ]; then
         mkdir -p "$SCRIPTS_TARGET"
-    fi
-
-    vicinae_running=$(pgrep vicinae)
-    noctalia_running=$(pgrep noctalia)
-
-    if [ -n "$vicinae_running" ]; then
-        pkill vicinae
-    fi
-
-    if [ -n "$noctalia_running" ]; then
-        kill -STOP "$noctalia_running"
     fi
 
     move "$SCRIPTS_SOURCE" "$SCRIPTS_TARGET"
@@ -93,6 +82,21 @@ switch () {
     if [ -n "$OVERLAY" ]; then
         apply-overlay "$OVERLAYS_SOURCE/$OVERLAY"
     fi
+}
+
+switch () {
+    vicinae_running=$(pgrep vicinae)
+    noctalia_running=$(pgrep noctalia)
+
+    if [ -n "$vicinae_running" ]; then
+        pkill vicinae
+    fi
+
+    if [ -n "$noctalia_running" ]; then
+        kill -STOP "$noctalia_running"
+    fi
+
+    copy
 
     if [ -n "$noctalia_running" ]; then
         kill -CONT "$noctalia_running"
@@ -173,6 +177,9 @@ command="$1"
 shift
 
 case "$command" in
+    copy)
+        copy "$@"
+        ;;
     switch)
         switch "$@"
         ;;
