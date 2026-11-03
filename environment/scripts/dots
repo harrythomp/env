@@ -12,7 +12,10 @@ SCRIPTS_SOURCE=${SCRIPTS_SOURCE:-"$SOURCE/environment/scripts"}
 SCRIPTS_TARGET=${SCRIPTS_TARGET:-"$TARGET/.local/scripts"}
 
 HOSTS_SOURCE=${HOSTS_SOURCE:-"$SOURCE/environment/hosts"}
-HOST=${HOST:-$(hostname)}
+
+if [ -z "$HOST" ] && command -v hostname &> /dev/null; then
+    HOST=$(hostname)
+fi
 
 OVERLAYS_SOURCE=${OVERLAYS_SOURCE:-"$SOURCE/environment/overlays"}
 
@@ -79,7 +82,9 @@ copy () {
     move "$CONFIG_SOURCE/bashrc" "$TARGET/.bashrc"
     move "$CONFIG_SOURCE/user-dirs.dirs" "$CONFIG_TARGET/user-dirs.dirs"
 
-    apply-overlay "$HOSTS_SOURCE/$HOST"
+    if [ -n "$HOST" ]; then
+        apply-overlay "$HOSTS_SOURCE/$HOST"
+    fi
     if [ -n "$OVERLAY" ]; then
         apply-overlay "$OVERLAYS_SOURCE/$OVERLAY"
     fi
