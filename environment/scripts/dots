@@ -27,10 +27,10 @@ if [ -z "$OVERLAY" ]; then
 fi
 
 move () {
-    dir="$1"
+    from="$1"
     to="$2"
     rm -rf "$to"
-    cp -R "$dir" "$to"
+    cp -R "$from" "$to"
 }
 
 apply-overlay () {
@@ -46,7 +46,7 @@ apply-overlay () {
             cat "$file" >> "$newfile"
         else
             newfile="$CONFIG_TARGET/$after"
-            cp "$file" "$newfile"
+            move "$file" "$newfile"
         fi
     done
 }
