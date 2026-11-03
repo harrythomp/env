@@ -11,7 +11,4 @@ stdenv.mkDerivation {
     buildPhase = ''
         HOST=${host} OVERLAY=${overlay} SOURCE="$src" TARGET="$out" environment/scripts/dots copy
     '';
-    installPhase = ''
-        cp -R "$out/.local/scripts" "$out/bin"
-    '';
 }
