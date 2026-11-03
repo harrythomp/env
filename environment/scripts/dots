@@ -31,6 +31,7 @@ move () {
     to="$2"
     rm -rf "$to"
     cp -R "$from" "$to"
+    chmod -R u+w "$to"
 }
 
 apply-overlay () {
@@ -74,9 +75,9 @@ copy () {
         chmod -R +x "$CONFIG_TARGET/session/scripts"
     fi
 
-    cp "$CONFIG_SOURCE/zshrc" "$TARGET/.zshrc"
-    cp "$CONFIG_SOURCE/bashrc" "$TARGET/.bashrc"
-    cp "$CONFIG_SOURCE/user-dirs.dirs" "$CONFIG_TARGET/user-dirs.dirs"
+    move "$CONFIG_SOURCE/zshrc" "$TARGET/.zshrc"
+    move "$CONFIG_SOURCE/bashrc" "$TARGET/.bashrc"
+    move "$CONFIG_SOURCE/user-dirs.dirs" "$CONFIG_TARGET/user-dirs.dirs"
 
     apply-overlay "$HOSTS_SOURCE/$HOST"
     if [ -n "$OVERLAY" ]; then
