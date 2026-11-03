@@ -1,15 +1,11 @@
-{ stdenv }:
+{ stdenv, dots }:
 
 stdenv.mkDerivation {
     name = "scripts";
     src = ../../../.;
-    patchPhase = ''
-        find environment/scripts -type f | while read -r script; do
-            patchShebangs "$script"
-        done
-    '';
+    nativeBuildInputs = [ dots ];
     installPhase = ''
-        mkdir -p "$out/bin"
-        cp -R "environment/scripts/" "$out/bin"
+        mkdir -p "$out"
+        cp -R "${dots}/.local/scripts" "$out/bin"
     '';
 }
