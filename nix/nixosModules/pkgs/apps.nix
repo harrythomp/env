@@ -44,6 +44,7 @@ in
         chromium
     ] ++ (with unstable-pkgs; [
         ghostty
+        ghostty.terminfo
         bottles
     ]);
 

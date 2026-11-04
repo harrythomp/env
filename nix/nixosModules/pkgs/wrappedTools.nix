@@ -1,14 +1,15 @@
 { self, ... }@inputs: { config, pkgs, lib, ... }:
 
 let
-    dots = self.packages.${pkgs.stdenv.hostPlatform.system}.dots.override {
+    self-pkgs = self.packages.${pkgs.stdenv.hostPlatform.system};
+    dots = self-pkgs.dots.override {
         host = config.env.dots.host;
         overlay = config.env.dots.overlay;
     };
     packages =
         map
         (pkg: pkg.override { inherit dots; })
-        (with self.packages.${pkgs.stdenv.hostPlatform.system}; [
+        (with self-pkgs; [
             btop
             fish
             neovim
@@ -17,6 +18,7 @@ let
             tmux
             yazi
         ]);
+    fish = self-pkgs.fish.override { inherit dots; };
 in
 {
 
@@ -35,6 +37,10 @@ in
     };
 
     config = {
+
+        nixpkgs.overlays = [
+            (final: prev: { inherit fish; })
+        ];
 
         environment.systemPackages = packages ++ (with pkgs; [
             luaPackages.tree-sitter-cli

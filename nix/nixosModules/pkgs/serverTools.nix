@@ -21,6 +21,7 @@
         ascii
         wget
         gcc
+        ghostty.terminfo
     ];
 
 }
