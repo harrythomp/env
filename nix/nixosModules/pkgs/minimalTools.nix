@@ -15,7 +15,7 @@ in
         fastfetch
         gnumake
         git
-        btop
+        btop #
         zoxide
         unzip
         tldr
@@ -28,9 +28,9 @@ in
         gcc
         matugen
     ] ++ [
-        session
+        session #
     ] ++ (with unstable-pkgs; [
-        neovim
+        neovim #
     ]);
 
 }
