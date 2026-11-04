@@ -15,7 +15,7 @@ in
         fastfetch
         gnumake
         git
-        btop #
+        btop
         zoxide
         unzip
         tldr
