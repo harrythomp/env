@@ -39,7 +39,6 @@ if command -v zoxide &>/dev/null
 end
 
 if command -v starship &>/dev/null
-    set -x STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
     starship init fish | source
 end
 
