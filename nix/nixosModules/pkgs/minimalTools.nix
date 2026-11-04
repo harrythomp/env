@@ -28,7 +28,7 @@ in
         gcc
         matugen
     ] ++ [
-        session #
+        session
     ] ++ (with unstable-pkgs; [
         neovim #
     ]);
