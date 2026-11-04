@@ -1,7 +1,7 @@
 inputs: { pkgs, lib, config, ... }:
 
  let
-    unstable-pkgs = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+    unstable-pkgs = import inputs.nixpkgs-unstable { system = pkgs.stdenv.hostPlatform.system; };
     cfg = config.env.moonshine;
  in
  {

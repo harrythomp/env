@@ -1,7 +1,7 @@
 inputs: { pkgs, ... }:
 
 let
-    unstable-pkgs = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+    unstable-pkgs = import inputs.nixpkgs-unstable { system = pkgs.stdenv.hostPlatform.system; };
     session = inputs.session.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
