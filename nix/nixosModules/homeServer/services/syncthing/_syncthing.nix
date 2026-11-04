@@ -2,10 +2,7 @@ inputs: { config, lib, ... }:
 
 let
     cfg = config.env.homeServer.services.syncthing;
-    homeServerUser = config.env.homeServer.user;
-    syncthingUser = config.services.syncthing.user;
-    syncthingUserGroup = config.users.users.${syncthingUser}.group;
-    syncthingUserHome = config.users.users.${syncthingUser}.home;
+    syncthingUserGroup = config.users.users.${cfg.user}.group;
     allDevices = builtins.attrNames config.services.syncthing.settings.devices;
     enableFor = devices: builtins.elem config.networking.hostName devices;
 in
@@ -23,6 +20,11 @@ in
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
+        };
+
+        user = lib.mkOption {
+            type = lib.types.str;
+            default = "syncthing";
         };
 
     };
@@ -97,10 +99,10 @@ in
                     globalAnnounceEnabled = false;
                 };
             };
-            user = lib.mkDefault homeServerUser;
-            group = lib.mkDefault syncthingUserGroup;
-            dataDir = syncthingUserHome;
-            configDir = "${syncthingUserHome}/.local/state/syncthing";
+            user = cfg.user;
+            group = syncthingUserGroup;
+            dataDir = cfg.serviceLocation;
+            configDir = "${cfg.serviceLocation}/.local/state/syncthing";
         };
 
         systemd.services."syncthing" = {

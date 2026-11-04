@@ -4,8 +4,7 @@ inputs: { pkgs, lib, config, ... }:
 
 let
     cfg = config.env.homeServer.services.radicale;
-    homeServerUser = config.env.homeServer.user;
-    homeServerGroup = config.users.users.${homeServerUser}.group;
+    radicaleUser = config.env.homeServer.user;
     radicaleTag = "3.8.0.0";
 in
 {
@@ -21,6 +20,11 @@ in
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
+        };
+
+        user = lib.mkOption {
+            type = lib.types.str;
+            default = "radicale";
         };
 
     };
@@ -42,6 +46,16 @@ in
         };
 
         virtualisation.oci-containers.backend = "podman";
+
+        # User
+        users = {
+            groups.radicale = {};
+            users.radicale = {
+                isSystemUser = true;
+                group = "radicale";
+                description = "Radicale service runner";
+            };
+        };
 
         # Containers
         virtualisation.oci-containers.containers."radicale" = {
@@ -68,12 +82,12 @@ in
                 "--network=radicale_default"
                 "--security-opt=no-new-privileges:true"
             ];
-            podman.user = homeServerUser;
+            podman.user = radicaleUser;
         };
         systemd.services."podman-radicale" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
-                User = homeServerUser;
+                User = radicaleUser;
             };
             after = [
                 "podman-network-radicale_default.service"
@@ -96,7 +110,7 @@ in
                 Type = "oneshot";
                 RemainAfterExit = true;
                 ExecStop = "podman network rm -f radicale_default";
-                User = homeServerUser;
+                User = radicaleUser;
             };
             script = ''
                 podman network inspect radicale_default || podman network create radicale_default

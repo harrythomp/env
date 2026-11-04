@@ -12,11 +12,11 @@
     ];
 
     env.homeServer = {
-        user = "harry";
         services = {
             syncthing = {
                 enable = true;
-                serviceLocation = config.users.users.${config.env.homeServer.user}.home;
+                user = "harry";
+                serviceLocation = "/home/harry";
             };
         };
     };

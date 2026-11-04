@@ -4,8 +4,7 @@ inputs: { pkgs, lib, config, ... }:
 
 let
     cfg = config.env.homeServer.services.immich;
-    homeServerUser = config.env.homeServer.user;
-    homeServerGroup = config.users.users.${homeServerUser}.group;
+    immichUser = cfg.user;
     immichTag = "v3.2.2";
 in
 {
@@ -21,6 +20,11 @@ in
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
+        };
+
+        user = lib.mkOption {
+            type = lib.types.str;
+            default = "immich";
         };
 
     };
@@ -43,6 +47,16 @@ in
 
         virtualisation.oci-containers.backend = "podman";
 
+        # User
+        users = {
+            groups.immich = {};
+            users.immich = {
+                isSystemUser = true;
+                group = "immich";
+                description = "Immich service runner";
+            };
+        };
+
         # Containers
         virtualisation.oci-containers.containers."immich_machine_learning" = {
             image = "ghcr.io/immich-app/immich-machine-learning:${immichTag}";
@@ -54,12 +68,12 @@ in
                 "--network-alias=immich-machine-learning"
                 "--network=immich_default"
             ];
-            podman.user = homeServerUser;
+            podman.user = immichUser;
         };
         systemd.services."podman-immich_machine_learning" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
-                User = homeServerUser;
+                User = immichUser;
             };
             after = [
                 "podman-network-immich_default.service"
@@ -90,12 +104,12 @@ in
                 "--network=immich_default"
                 "--shm-size=134217728"
             ];
-            podman.user = homeServerUser;
+            podman.user = immichUser;
         };
         systemd.services."podman-immich_postgres" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
-                User = homeServerUser;
+                User = immichUser;
             };
             after = [
                 "podman-network-immich_default.service"
@@ -118,12 +132,12 @@ in
                 "--network-alias=redis"
                 "--network=immich_default"
             ];
-            podman.user = homeServerUser;
+            podman.user = immichUser;
         };
         systemd.services."podman-immich_redis" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
-                User = homeServerUser;
+                User = immichUser;
             };
             after = [
                 "podman-network-immich_default.service"
@@ -159,12 +173,12 @@ in
                 "--network-alias=immich-server"
                 "--network=immich_default"
             ];
-            podman.user = homeServerUser;
+            podman.user = immichUser;
         };
         systemd.services."podman-immich_server" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
-                User = homeServerUser;
+                User = immichUser;
             };
             after = [
                 "podman-network-immich_default.service"
@@ -187,7 +201,7 @@ in
                 Type = "oneshot";
                 RemainAfterExit = true;
                 ExecStop = "podman network rm -f immich_default";
-                User = homeServerUser;
+                User = immichUser;
             };
             script = ''
                 podman network inspect immich_default || podman network create immich_default
@@ -202,7 +216,7 @@ in
             serviceConfig = {
                 Type = "oneshot";
                 RemainAfterExit = true;
-                User = homeServerUser;
+                User = immichUser;
             };
             script = ''
                 podman volume inspect immich_model-cache || podman volume create immich_model-cache

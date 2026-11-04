@@ -2,7 +2,6 @@ inputs: { config, lib, pkgs, ... }:
 
 let
     cfg = config.env.homeServer;
-    home = config.users.users.${cfg.user}.home;
     services = builtins.attrNames (builtins.readDir ./services);
     shouldBackupService = service: cfg.services.${service}.backup && cfg.services.${service}.enable;
     servicesWithBackupEnabled = builtins.filter shouldBackupService services;
@@ -13,13 +12,9 @@ in
 
     options.env.homeServer = {
 
-        user = lib.mkOption {
-            type = lib.types.str;
-        };
-
         servicesLocation = lib.mkOption {
             type = lib.types.str;
-            default = "${home}/services";
+            default = "/var/lib";
         };
 
         backup = lib.mkOption {
@@ -40,12 +35,13 @@ in
             restic
         ];
 
-        users.groups.restic = {};
-
-        users.users.restic = {
-            isSystemUser = true;
-            group = "restic";
-            description = "Restic backup runner";
+        users = {
+            groups.restic = {};
+            users.restic = {
+                isSystemUser = true;
+                group = "restic";
+                description = "Restic backup runner";
+            };
         };
 
         systemd.services.restic-backup = {

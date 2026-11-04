@@ -7,17 +7,14 @@
     # nixpkgs.buildPlatform = "x86_64-linux"; # force system to be cross compiled from x86_64
 
     imports = [
-        self.nixosModules.harryUser
-        self.nixosModules.serverUser
-
         inputs.nixos-hardware.nixosModules.raspberry-pi-4
 
+        self.nixosModules.adminUser
         self.nixosModules.base
         self.nixosModules.tailscale
         self.nixosModules.openssh
         self.nixosModules.scripts
         self.nixosModules.serverTools
-
         self.nixosModules.homeServer
     ];
 
@@ -38,15 +35,12 @@
     powerManagement.cpuFreqGovernor = "ondemand";
 
     env.homeServer = {
-        user = "server";
-
         services = {
             syncthing.enable = true;
             immich.enable = true;
             navidrome.enable = true;
             radicale.enable = true;
         };
-
         backup = true;
     };
 

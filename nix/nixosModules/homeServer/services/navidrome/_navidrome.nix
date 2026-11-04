@@ -4,8 +4,7 @@ inputs: { pkgs, lib, config, ... }:
 
 let
     cfg = config.env.homeServer.services.navidrome;
-    homeServerUser = config.env.homeServer.user;
-    homeServerGroup = config.users.users.${homeServerUser}.group;
+    navidromeUser = cfg.user;
     navidromeTag = "0.64.1";
 in
 {
@@ -21,6 +20,11 @@ in
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
+        };
+
+        user = lib.mkOption {
+            type = lib.types.str;
+            default = "navidrome";
         };
 
     };
@@ -43,6 +47,16 @@ in
 
         virtualisation.oci-containers.backend = "podman";
 
+        # User
+        users = {
+            groups.navidrome = {};
+            users.navidrome = {
+                isSystemUser = true;
+                group = "navidrome";
+                description = "Navidrome service runner";
+            };
+        };
+
         # Containers
         virtualisation.oci-containers.containers."navidrome-navidrome" = {
             image = "deluan/navidrome:${navidromeTag}";
@@ -59,12 +73,12 @@ in
                 "--network-alias=navidrome"
                 "--network=navidrome_default"
             ];
-            podman.user = homeServerUser;
+            podman.user = navidromeUser;
         };
         systemd.services."podman-navidrome-navidrome" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
-                User = homeServerUser;
+                User = navidromeUser;
             };
             after = [
                 "podman-network-navidrome_default.service"
@@ -87,7 +101,7 @@ in
                 Type = "oneshot";
                 RemainAfterExit = true;
                 ExecStop = "podman network rm -f navidrome_default";
-                User = homeServerUser;
+                User = navidromeUser;
             };
             script = ''
                 podman network inspect navidrome_default || podman network create navidrome_default
