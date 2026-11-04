@@ -56,6 +56,7 @@ in
                 description = "Radicale service runner";
                 linger = true;
                 home = cfg.serviceLocation;
+                createHome = true;
                 autoSubUidGidRange = true;
             };
         };

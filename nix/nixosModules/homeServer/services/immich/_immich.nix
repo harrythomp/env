@@ -56,6 +56,7 @@ in
                 description = "Immich service runner";
                 linger = true;
                 home = cfg.serviceLocation;
+                createHome = true;
                 autoSubUidGidRange = true;
             };
         };
