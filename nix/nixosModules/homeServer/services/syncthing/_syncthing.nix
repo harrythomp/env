@@ -2,7 +2,6 @@ inputs: { config, lib, ... }:
 
 let
     cfg = config.env.homeServer.services.syncthing;
-    syncthingUserGroup = config.users.users.${cfg.user}.group;
     allDevices = builtins.attrNames config.services.syncthing.settings.devices;
     enableFor = devices: builtins.elem config.networking.hostName devices;
 in
@@ -100,7 +99,6 @@ in
                 };
             };
             user = cfg.user;
-            group = syncthingUserGroup;
             dataDir = cfg.serviceLocation;
             configDir = "${cfg.serviceLocation}/.local/state/syncthing";
         };

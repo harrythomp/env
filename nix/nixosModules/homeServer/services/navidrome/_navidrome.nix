@@ -54,6 +54,7 @@ in
                 isSystemUser = true;
                 group = "navidrome";
                 description = "Navidrome service runner";
+                linger = true;
             };
         };
 

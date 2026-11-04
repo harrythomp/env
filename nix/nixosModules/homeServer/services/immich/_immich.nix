@@ -54,6 +54,7 @@ in
                 isSystemUser = true;
                 group = "immich";
                 description = "Immich service runner";
+                linger = true;
             };
         };
 

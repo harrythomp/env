@@ -4,7 +4,7 @@ inputs: { pkgs, lib, config, ... }:
 
 let
     cfg = config.env.homeServer.services.radicale;
-    radicaleUser = config.env.homeServer.user;
+    radicaleUser = cfg.user;
     radicaleTag = "3.8.0.0";
 in
 {
@@ -54,6 +54,7 @@ in
                 isSystemUser = true;
                 group = "radicale";
                 description = "Radicale service runner";
+                linger = true;
             };
         };
 
