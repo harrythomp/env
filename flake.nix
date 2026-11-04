@@ -31,5 +31,6 @@
         nixosModules = loadFiles ./nix/nixosModules { args = inputs; };
         nixosConfigurations = loadFiles ./nix/nixosConfigurations { shallow = true; args = inputs; };
         packages = eachSupportedSystem (system: loadFiles ./nix/packages { shallow = true; args = inputs // { inherit system; }; });
+        devShells = eachSupportedSystem (system: loadFiles ./nix/devShells { shallow = true; args = inputs // { inherit system; }; });
     };
 }
