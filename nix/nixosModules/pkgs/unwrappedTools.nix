@@ -7,26 +7,11 @@ in
 {
 
     environment.systemPackages = with pkgs; [
-        tmux
-        luaPackages.tree-sitter-cli
-        yazi
-        fzf
-        ripgrep
-        fastfetch
-        gnumake
-        git
         btop
-        zoxide
-        unzip
-        tldr
-        bat
+        fish
         starship
-        jq
-        socat
-        ascii
-        wget
-        gcc
-        matugen
+        tmux
+        yazi
     ] ++ [
         session
     ] ++ (with unstable-pkgs; [

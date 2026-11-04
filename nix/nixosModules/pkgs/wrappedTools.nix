@@ -7,12 +7,16 @@ let
     };
     packages =
         map
-        ({ name, value }: value.override { inherit dots; })
-        (
-            builtins.filter
-            ({ name, value }: name != "dots" && name != "scripts")
-            (lib.attrsToList self.packages.${pkgs.stdenv.hostPlatform.system})
-        );
+        (pkg: pkg.override { inherit dots; })
+        (with self.packages.${pkgs.stdenv.hostPlatform.system}; [
+            btop
+            fish
+            neovim
+            session
+            starship
+            tmux
+            yazi
+        ]);
 in
 {
 
@@ -32,7 +36,9 @@ in
 
     config = {
 
-        environment.systemPackages = packages;
+        environment.systemPackages = packages ++ (with pkgs; [
+            luaPackages.tree-sitter-cli
+        ]);
 
     };
 

@@ -22,7 +22,7 @@
         self.nixosModules.apps
         self.nixosModules.gaming
         self.nixosModules.languages
-        self.nixosModules.tools
+        self.nixosModules.desktopTools
 
         self.nixosModules.niri
         self.nixosModules.waylandWMExtras

@@ -1,15 +1,16 @@
-inputs: { pkgs, ... }:
+{ self, ... }@inputs: { pkgs, ... }:
 
 let
     unstable-pkgs = import inputs.nixpkgs-unstable { system = pkgs.stdenv.hostPlatform.system; };
-    session = inputs.session.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
 
+    imports = [
+        self.nixosModules.unwrappedTools
+    ];
+
     environment.systemPackages = with pkgs; [
-        tmux
         luaPackages.tree-sitter-cli
-        yazi
         air
         neocities
         fzf
@@ -25,14 +26,12 @@ in
         cava
         git-filter-repo
         git
-        btop
         zoxide
         unzip
         tldr
         mdp
         gtypist
         bat
-        starship
         jq
         tokei
         caddy
@@ -46,11 +45,8 @@ in
         compose2nix
         gcc
         matugen
-    ] ++ [
-        session
     ] ++ (with unstable-pkgs; [
         opencode
-        neovim
     ]);
 
 }
