@@ -56,6 +56,7 @@ in
                 description = "Navidrome service runner";
                 linger = true;
                 home = cfg.serviceLocation;
+                autoSubUidGidRange = true;
             };
         };
 
@@ -89,10 +90,10 @@ in
                 "podman-network-navidrome_default.service"
             ];
             partOf = [
-                "podman-compose-navidrome-root.target"
+                "navidrome-root.target"
             ];
             wantedBy = [
-                "podman-compose-navidrome-root.target"
+                "navidrome-root.target"
             ];
         };
 
@@ -108,8 +109,8 @@ in
             script = ''
                 podman network inspect navidrome_default || podman network create navidrome_default
                 '';
-            partOf = [ "podman-compose-navidrome-root.target" ];
-            wantedBy = [ "podman-compose-navidrome-root.target" ];
+            partOf = [ "navidrome-root.target" ];
+            wantedBy = [ "navidrome-root.target" ];
         };
 
         # Root service

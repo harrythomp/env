@@ -56,6 +56,7 @@ in
                 description = "Immich service runner";
                 linger = true;
                 home = cfg.serviceLocation;
+                autoSubUidGidRange = true;
             };
         };
 
@@ -86,10 +87,10 @@ in
                 "podman-volume-immich_model-cache.service"
             ];
             partOf = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
             wantedBy = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
         };
         virtualisation.oci-containers.containers."immich_postgres" = {
@@ -120,10 +121,10 @@ in
                 "podman-network-immich_default.service"
             ];
             partOf = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
             wantedBy = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
         };
         virtualisation.oci-containers.containers."immich_redis" = {
@@ -148,10 +149,10 @@ in
                 "podman-network-immich_default.service"
             ];
             partOf = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
             wantedBy = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
         };
         virtualisation.oci-containers.containers."immich_server" = {
@@ -189,10 +190,10 @@ in
                 "podman-network-immich_default.service"
             ];
             partOf = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
             wantedBy = [
-                "podman-compose-immich-root.target"
+                "immich-root.target"
             ];
         };
 
@@ -208,8 +209,8 @@ in
             script = ''
                 podman network inspect immich_default || podman network create immich_default
                 '';
-            partOf = [ "podman-compose-immich-root.target" ];
-            wantedBy = [ "podman-compose-immich-root.target" ];
+            partOf = [ "immich-root.target" ];
+            wantedBy = [ "immich-root.target" ];
         };
 
         # Volumes
@@ -223,8 +224,8 @@ in
             script = ''
                 podman volume inspect immich_model-cache || podman volume create immich_model-cache
                 '';
-            partOf = [ "podman-compose-immich-root.target" ];
-            wantedBy = [ "podman-compose-immich-root.target" ];
+            partOf = [ "immich-root.target" ];
+            wantedBy = [ "immich-root.target" ];
         };
 
         # Root service

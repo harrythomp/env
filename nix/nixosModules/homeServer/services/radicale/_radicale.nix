@@ -56,6 +56,7 @@ in
                 description = "Radicale service runner";
                 linger = true;
                 home = cfg.serviceLocation;
+                autoSubUidGidRange = true;
             };
         };
 
@@ -98,10 +99,10 @@ in
                 "podman-network-radicale_default.service"
             ];
             partOf = [
-                "podman-compose-radicale-root.target"
+                "radicale-root.target"
             ];
             wantedBy = [
-                "podman-compose-radicale-root.target"
+                "radicale-root.target"
             ];
         };
 
@@ -117,8 +118,8 @@ in
             script = ''
                 podman network inspect radicale_default || podman network create radicale_default
                 '';
-            partOf = [ "podman-compose-radicale-root.target" ];
-            wantedBy = [ "podman-compose-radicale-root.target" ];
+            partOf = [ "radicale-root.target" ];
+            wantedBy = [ "radicale-root.target" ];
         };
 
         # Root service
