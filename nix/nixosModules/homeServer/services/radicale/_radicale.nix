@@ -55,6 +55,7 @@ in
                 group = "radicale";
                 description = "Radicale service runner";
                 linger = true;
+                home = cfg.serviceLocation;
             };
         };
 

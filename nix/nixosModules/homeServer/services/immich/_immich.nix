@@ -55,6 +55,7 @@ in
                 group = "immich";
                 description = "Immich service runner";
                 linger = true;
+                home = cfg.serviceLocation;
             };
         };
 

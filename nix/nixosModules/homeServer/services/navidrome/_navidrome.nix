@@ -55,6 +55,7 @@ in
                 group = "navidrome";
                 description = "Navidrome service runner";
                 linger = true;
+                home = cfg.serviceLocation;
             };
         };
 
