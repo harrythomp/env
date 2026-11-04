@@ -30,7 +30,7 @@ in
     ] ++ [
         session
     ] ++ (with unstable-pkgs; [
-        neovim #
+        neovim
     ]);
 
 }
