@@ -13,6 +13,7 @@ pkgs.mkShell {
         tmux
         yazi
     ] ++ (with pkgs; [
+        luaPackages.tree-sitter-cli
         fzf
         fastfetch
         git

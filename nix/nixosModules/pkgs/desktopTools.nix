@@ -10,7 +10,6 @@ in
     ];
 
     environment.systemPackages = with pkgs; [
-        luaPackages.tree-sitter-cli
         air
         neocities
         fzf
