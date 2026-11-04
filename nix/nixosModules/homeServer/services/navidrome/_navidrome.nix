@@ -60,7 +60,7 @@ in
         };
 
         # Containers
-        virtualisation.oci-containers.containers."navidrome-navidrome" = {
+        virtualisation.oci-containers.containers."navidrome" = {
             image = "deluan/navidrome:${navidromeTag}";
             volumes = [
                 "${cfg.serviceLocation}/data:/data:rw"
@@ -77,7 +77,7 @@ in
             ];
             podman.user = navidromeUser;
         };
-        systemd.services."podman-navidrome-navidrome" = {
+        systemd.services."podman-navidrome" = {
             serviceConfig = {
                 Restart = lib.mkOverride 90 "always";
                 User = navidromeUser;
