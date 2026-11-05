@@ -89,6 +89,9 @@ copy () {
     if [ -n "$OVERLAY" ]; then
         apply-overlay "$OVERLAYS_SOURCE/$OVERLAY"
     fi
+
+    # patch matugen
+    sed -e "s@~/.config@$CONFIG_TARGET@" -e "s@~/.local/share@$TARGET/.local/share@" --in-place "$CONFIG_TARGET/matugen/config.toml"
 }
 
 switch () {
@@ -173,9 +176,9 @@ set-theme () {
 
     if command -v matugen &> /dev/null; then
         if [ -n "$colour" ]; then
-            matugen color hex "$colour" -m "$mode"
+            matugen color hex "$colour" -m "$mode" -c "$CONFIG_TARGET/matugen/config.toml"
         elif [ -f "$wallpaper" ]; then
-            matugen image "$wallpaper" -t "scheme-tonal-spot" -m "$mode" --source-color-index 0
+            matugen image "$wallpaper" -t "scheme-tonal-spot" -m "$mode" --source-color-index 0 -c "$CONFIG_TARGET/matugen/config.toml"
         fi
     fi
 }

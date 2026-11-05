@@ -1,14 +1,19 @@
-{ stdenv, host, overlay }:
+{ stdenv, host, overlay, matugen }:
 
 stdenv.mkDerivation {
     name = "dots";
     src = ../../../.;
     patchPhase = ''
-        find environment/scripts -type f | while read -r script; do
-            patchShebangs "$script"
-        done
+        patchShebangs environment/scripts
     '';
+    nativeBuildInputs = [ matugen ];
     buildPhase = ''
-        HOST=${host} OVERLAY=${overlay} SOURCE="$src" TARGET="$out" environment/scripts/dots copy
+        export HOST="${host}"
+        export OVERLAY="${overlay}"
+        export SOURCE="$src"
+        export TARGET="$out"
+
+        environment/scripts/dots copy
+        environment/scripts/dots set-theme
     '';
 }
