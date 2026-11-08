@@ -1,0 +1,11 @@
+keys:
+  - &laptop age1yz6rlntu5htm9mdpuhwhz25vpexp7ggh8v0sd4xrczqasj8rzvjqgngftp
+  - &desktop age1d229p75l4vqc9n8tdjwe5cvcxwvduukrdm52p7jd0k7250z645tsrv4p8t
+  - &pi age15vn6f8rycssq8udntzqpqx64nhgj7jufhw7x53hmvyfz0j428p4sufj77v
+creation_rules:
+  - path_regex: secrets/tailscale.yml
+    key_groups:
+    - age:
+      - *laptop
+      - *desktop
+      - *pi

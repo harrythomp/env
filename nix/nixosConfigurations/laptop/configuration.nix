@@ -9,6 +9,7 @@
 
         self.nixosModules.default
         self.nixosModules.battery
+        self.nixosModules.sops
     ];
 
     env.homeServer = {

@@ -44,6 +44,9 @@ in
         compose2nix
         gcc
         matugen
+        sops
+        age
+        ssh-to-age
     ] ++ (with unstable-pkgs; [
         opencode
     ]);

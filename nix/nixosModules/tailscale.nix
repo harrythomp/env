@@ -2,6 +2,9 @@ inputs:
 
 {
 
-    services.tailscale.enable = true;
+    services.tailscale = {
+        enable = true;
+        authKeyFile = "/run/secrets/tailscale-auth-key";
+    };
 
 }
