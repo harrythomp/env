@@ -9,3 +9,7 @@ creation_rules:
       - *laptop
       - *desktop
       - *pi
+  - path_regex: secrets/homeserver.yml
+    key_groups:
+    - age:
+      - *pi
