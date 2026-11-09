@@ -8,8 +8,9 @@ let
 in
 {
 
-    imports = (map (service: import ./services/${service}/_${service}.nix inputs) services) ++ [
+    imports = (map (service: ./services/${service}/_${service}.nix) services) ++ [
         self.nixosModules.sops
+        ./_containers.nix
     ];
 
     options.env.homeServer = {

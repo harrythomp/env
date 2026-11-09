@@ -1,4 +1,4 @@
-inputs: { config, lib, ... }:
+{ config, lib, ... }:
 
 let
     cfg = config.env.homeServer.services.syncthing;
@@ -124,7 +124,7 @@ in
 
         systemd.targets."syncthing-root" = {
             unitConfig = {
-                Description = "Root target";
+                Description = "syncthing root target";
             };
             wantedBy = [ "multi-user.target" ];
         };
