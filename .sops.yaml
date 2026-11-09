@@ -15,3 +15,15 @@ creation_rules:
     - age:
       - *pi
       - *recovery
+  - path_regex: secrets/laptop.yml
+    key_groups:
+    - age:
+      - *laptop
+  - path_regex: secrets/desktop.yml
+    key_groups:
+    - age:
+      - *desktop
+  - path_regex: secrets/pi.yml
+    key_groups:
+    - age:
+      - *pi
