@@ -33,7 +33,7 @@ in
         sops.secrets =
             let
                 secret = {
-                    sopsFile = ../../../../../secrets/${config.networking.hostName}.yml;
+                    sopsFile = ../../../../secrets/${config.networking.hostName}.yml;
                     owner = cfg.user;
                 };
             in

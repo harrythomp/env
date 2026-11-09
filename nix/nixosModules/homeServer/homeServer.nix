@@ -2,13 +2,13 @@
 
 let
     cfg = config.env.homeServer;
-    services = builtins.attrNames (builtins.readDir ./services);
+    services = map (name: builtins.replaceStrings [ "_" ".nix" ] [ "" "" ] name) (builtins.attrNames (builtins.readDir ./services));
     shouldBackupService = service: cfg.services.${service}.backup && cfg.services.${service}.enable;
     servicesWithBackupEnabled = builtins.filter shouldBackupService services;
 in
 {
 
-    imports = (map (service: ./services/${service}/_${service}.nix) services) ++ [
+    imports = (map (service: ./services/_${service}.nix) services) ++ [
         self.nixosModules.sops
         ./_containers.nix
     ];
