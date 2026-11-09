@@ -1,4 +1,4 @@
-{ self, ... }:
+{ self, ... }: { config, ... }:
 
 {
 
@@ -14,7 +14,7 @@
 
     services.tailscale = {
         enable = true;
-        authKeyFile = "/run/secrets/tailscale-auth-key";
+        authKeyFile = config.sops.secrets.tailscale-auth-key.path;
     };
 
 }

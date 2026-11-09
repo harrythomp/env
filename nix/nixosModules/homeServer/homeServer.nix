@@ -26,7 +26,7 @@ in
 
         resticEnvironmentFile = lib.mkOption {
             type = lib.types.str;
-            default = "/run/secrets/restic-env";
+            default = config.sops.secrets.restic-env.path;
         };
 
     };
