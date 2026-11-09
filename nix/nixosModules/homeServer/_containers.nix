@@ -79,8 +79,9 @@ let
     let
         containerServiceNames = map (name: config.virtualisation.oci-containers.containers.${name}.serviceName) cfg.containers;
         networkServiceNames = map (name: config.env.homeServer.containers.networks.${name}.serviceName) cfg.networks;
+        volumeServiceNames = map (name: config.env.homeServer.containers.volumes.${name}.serviceName) cfg.volumes;
     in
-    lib.genAttrs (containerServiceNames ++ networkServiceNames) (_: {
+    lib.genAttrs (containerServiceNames ++ networkServiceNames ++ volumeServiceNames) (_: {
         partOf = [ "${cfg.targetName}.target" ];
         wantedBy = [ "${cfg.targetName}.target" ];
     });
@@ -170,6 +171,11 @@ in
                     };
 
                     networks = lib.mkOption {
+                        type = lib.types.listOf lib.types.str;
+                        default = [];
+                    };
+
+                    volumes = lib.mkOption {
                         type = lib.types.listOf lib.types.str;
                         default = [];
                     };

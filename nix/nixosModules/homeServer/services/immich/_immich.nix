@@ -31,23 +31,6 @@ in
 
     config = lib.mkIf cfg.enable {
 
-        # Runtime
-        virtualisation.podman = {
-            enable = true;
-            autoPrune.enable = true;
-            dockerCompat = true;
-        };
-
-        # Enable container name DNS for all Podman networks.
-        networking.firewall.interfaces = let
-            matchAll = if !config.networking.nftables.enable then "podman+" else "podman*";
-        in {
-            "${matchAll}".allowedUDPPorts = [ 53 ];
-        };
-
-        virtualisation.oci-containers.backend = "podman";
-
-        # User
         users = {
             groups.immich = {};
             users.immich = {
@@ -61,183 +44,93 @@ in
             };
         };
 
-        # Containers
-        virtualisation.oci-containers.containers."immich_machine_learning" = {
-            image = "ghcr.io/immich-app/immich-machine-learning:${immichTag}";
-            volumes = [
-                "immich_model-cache:/cache:rw"
-            ];
-            log-driver = "journald";
-            extraOptions = [
-                "--network-alias=immich-machine-learning"
-                "--network=immich_default"
-            ];
-            podman.user = immichUser;
-        };
-        systemd.services."podman-immich_machine_learning" = {
-            serviceConfig = {
-                Restart = lib.mkOverride 90 "always";
-                User = immichUser;
+        virtualisation.oci-containers.containers = {
+
+            "immich_machine_learning" = {
+                image = "ghcr.io/immich-app/immich-machine-learning:${immichTag}";
+                volumes = [
+                    "immich_model_cache:/cache:rw"
+                ];
+                log-driver = "journald";
+                extraOptions = [
+                    "--network-alias=immich-machine-learning"
+                ];
+                podman.user = immichUser;
             };
-            after = [
-                "podman-network-immich_default.service"
-                "podman-volume-immich_model-cache.service"
-            ];
-            requires = [
-                "podman-network-immich_default.service"
-                "podman-volume-immich_model-cache.service"
-            ];
-            partOf = [
-                "immich-root.target"
-            ];
-            wantedBy = [
-                "immich-root.target"
-            ];
-        };
-        virtualisation.oci-containers.containers."immich_postgres" = {
-            image = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
-            environmentFiles = [
-                "${cfg.serviceLocation}/.env"
-            ];
-            volumes = [
-                "${cfg.serviceLocation}/postgres:/var/lib/postgresql/data:rw"
-            ];
-            log-driver = "journald";
-            extraOptions = [
-                "--network-alias=database"
-                "--network=immich_default"
-                "--shm-size=134217728"
-            ];
-            podman.user = immichUser;
-        };
-        systemd.services."podman-immich_postgres" = {
-            serviceConfig = {
-                Restart = lib.mkOverride 90 "always";
-                User = immichUser;
+
+            "immich_postgres" = {
+                image = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
+                environmentFiles = [
+                    "${cfg.serviceLocation}/.env"
+                ];
+                volumes = [
+                    "${cfg.serviceLocation}/postgres:/var/lib/postgresql/data:rw"
+                ];
+                log-driver = "journald";
+                extraOptions = [
+                    "--network-alias=database"
+                    "--shm-size=134217728"
+                ];
+                podman.user = immichUser;
             };
-            after = [
-                "podman-network-immich_default.service"
-            ];
-            requires = [
-                "podman-network-immich_default.service"
-            ];
-            partOf = [
-                "immich-root.target"
-            ];
-            wantedBy = [
-                "immich-root.target"
-            ];
-        };
-        virtualisation.oci-containers.containers."immich_redis" = {
-            image = "docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9";
-            log-driver = "journald";
-            extraOptions = [
-                "--health-cmd=redis-cli ping || exit 1"
-                "--network-alias=redis"
-                "--network=immich_default"
-            ];
-            podman.user = immichUser;
-        };
-        systemd.services."podman-immich_redis" = {
-            serviceConfig = {
-                Restart = lib.mkOverride 90 "always";
-                User = immichUser;
+
+            "immich_redis" = {
+                image = "docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9";
+                log-driver = "journald";
+                extraOptions = [
+                    "--health-cmd=redis-cli ping || exit 1"
+                    "--network-alias=redis"
+                ];
+                podman.user = immichUser;
             };
-            after = [
-                "podman-network-immich_default.service"
-            ];
-            requires = [
-                "podman-network-immich_default.service"
-            ];
-            partOf = [
-                "immich-root.target"
-            ];
-            wantedBy = [
-                "immich-root.target"
-            ];
-        };
-        virtualisation.oci-containers.containers."immich_server" = {
-            image = "ghcr.io/immich-app/immich-server:${immichTag}";
-            environmentFiles = [
-                "${cfg.serviceLocation}/.env"
-            ];
-            volumes = [
-                "/etc/localtime:/etc/localtime:ro"
-                "${cfg.serviceLocation}/library:/data:rw"
-            ];
-            ports = [
-                "2283:2283/tcp"
-            ];
-            dependsOn = [
-                "immich_postgres"
-                "immich_redis"
-            ];
-            log-driver = "journald";
-            extraOptions = [
-                "--network-alias=immich-server"
-                "--network=immich_default"
-            ];
-            podman.user = immichUser;
-        };
-        systemd.services."podman-immich_server" = {
-            serviceConfig = {
-                Restart = lib.mkOverride 90 "always";
-                User = immichUser;
+
+            "immich_server" = {
+                image = "ghcr.io/immich-app/immich-server:${immichTag}";
+                environmentFiles = [
+                    "${cfg.serviceLocation}/.env"
+                ];
+                volumes = [
+                    "/etc/localtime:/etc/localtime:ro"
+                    "${cfg.serviceLocation}/library:/data:rw"
+                ];
+                ports = [
+                    "2283:2283/tcp"
+                ];
+                dependsOn = [
+                    "immich_postgres"
+                    "immich_redis"
+                ];
+                log-driver = "journald";
+                extraOptions = [
+                    "--network-alias=immich-server"
+                ];
+                podman.user = immichUser;
             };
-            after = [
-                "podman-network-immich_default.service"
-            ];
-            requires = [
-                "podman-network-immich_default.service"
-            ];
-            partOf = [
-                "immich-root.target"
-            ];
-            wantedBy = [
-                "immich-root.target"
-            ];
+
         };
 
-        # Networks
-        systemd.services."podman-network-immich_default" = {
-            path = [ pkgs.podman "/run/wrappers" ];
-            serviceConfig = {
-                Type = "oneshot";
-                RemainAfterExit = true;
-                ExecStop = "podman network rm -f immich_default";
-                User = immichUser;
+        env.homeServer.containers = {
+            networks = {
+                immich = {
+                    containers = [ "immich_machine_learning" "immich_postgres" "immich_redis" "immich_server" ];
+                    user = immichUser;
+                };
             };
-            script = ''
-                podman network inspect immich_default || podman network create immich_default
-                '';
-            partOf = [ "immich-root.target" ];
-            wantedBy = [ "immich-root.target" ];
+            volumes = {
+                "immich_model_cache" = {
+                    containers = [ "immich_machine_learning" ];
+                    user = immichUser;
+                };
+            };
+            rootTargets = {
+                immich = {
+                    containers = [ "immich_machine_learning" "immich_postgres" "immich_redis" "immich_server" ];
+                    networks = [ "immich" ];
+                    volumes = [ "immich_model_cache" ];
+                };
+            };
         };
 
-        # Volumes
-        systemd.services."podman-volume-immich_model-cache" = {
-            path = [ pkgs.podman "/run/wrappers" ];
-            serviceConfig = {
-                Type = "oneshot";
-                RemainAfterExit = true;
-                User = immichUser;
-            };
-            script = ''
-                podman volume inspect immich_model-cache || podman volume create immich_model-cache
-                '';
-            partOf = [ "immich-root.target" ];
-            wantedBy = [ "immich-root.target" ];
-        };
-
-        # Root service
-        # When started, this will automatically create all resources and start
-        # the containers. When stopped, this will teardown all resources.
-        systemd.targets."immich-root" = {
-            unitConfig = {
-                Description = "Root target generated by compose2nix.";
-            };
-            wantedBy = [ "multi-user.target" ];
-        };
 
     };
 }
