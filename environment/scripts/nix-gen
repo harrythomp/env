@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+readlink /nix/var/nix/profiles/system | cut -d - -f2
