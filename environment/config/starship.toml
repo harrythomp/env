@@ -32,14 +32,14 @@ command = "whoami"
 style = "bold green"
 format = '[$output]($style)@'
 shell = "sh"
-when = 'test -n "$SSH_CLIENT" && test -n "$SSH_TTY"'
+when = 'test -n "$SSH_CLIENT" && test -n "$SSH_TTY" && test -z "$TMUX"'
 
 [custom.hostname]
 command = "hostname"
 style = "bold yellow"
 format = '[$output]($style) '
 shell = "sh"
-when = 'test -n "$SSH_CLIENT" && test -n "$SSH_TTY"'
+when = 'test -n "$SSH_CLIENT" && test -n "$SSH_TTY" && test -z "$TMUX"'
 
 [character]
 success_symbol = '[➜](bold green)'
