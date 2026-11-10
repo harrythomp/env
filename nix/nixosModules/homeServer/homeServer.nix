@@ -1,4 +1,4 @@
-{ self, ... }@inputs: { config, lib, pkgs, ... }:
+inputs: { config, lib, pkgs, ... }:
 
 let
     cfg = config.env.homeServer;
@@ -9,7 +9,6 @@ in
 {
 
     imports = (map (service: ./services/_${service}.nix) services) ++ [
-        self.nixosModules.sops
         ./_containers.nix
     ];
 
@@ -27,18 +26,12 @@ in
 
         resticEnvironmentFile = lib.mkOption {
             type = lib.types.str;
-            default = config.sops.secrets.restic-env.path;
+            default = "/run/secrets/restic-env";
         };
 
     };
 
     config = lib.mkIf cfg.backup {
-
-        sops.secrets = {
-            restic-env = {
-                sopsFile = ../../../secrets/homeserver.yml;
-            };
-        };
 
         environment.systemPackages = with pkgs; [
             restic

@@ -30,18 +30,6 @@ in
 
     config = lib.mkIf cfg.enable {
 
-        sops.secrets =
-            let
-                secret = {
-                    sopsFile = ../../../../secrets/${config.networking.hostName}.yml;
-                    owner = cfg.user;
-                };
-            in
-            {
-                syncthing-key = secret;
-                syncthing-cert = secret;
-            };
-
         services.syncthing = {
             enable = true;
             settings = {
@@ -113,8 +101,8 @@ in
             user = cfg.user;
             dataDir = cfg.serviceLocation;
             configDir = "${cfg.serviceLocation}/.local/state/syncthing";
-            key = config.sops.secrets.syncthing-key.path;
-            cert = config.sops.secrets.syncthing-cert.path;
+            key = "/run/secrets/syncthing-key";
+            cert = "/run/secrets/syncthing-cert";
         };
 
         systemd.services."syncthing" = {
