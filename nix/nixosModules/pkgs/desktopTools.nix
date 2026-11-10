@@ -1,13 +1,10 @@
-{ self, ... }@inputs: { pkgs, ... }:
+inputs: { pkgs, ... }:
 
 let
     unstable-pkgs = import inputs.nixpkgs-unstable { system = pkgs.stdenv.hostPlatform.system; };
+    session = inputs.session.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
-
-    imports = [
-        self.nixosModules.unwrappedTools
-    ];
 
     environment.systemPackages = with pkgs; [
         air
@@ -49,6 +46,18 @@ in
         ssh-to-age
     ] ++ (with unstable-pkgs; [
         opencode
+    ]) # normal versions of 'wrapped tools'
+    ++ (with pkgs; [
+        luaPackages.tree-sitter-cli
+        btop
+        fish
+        starship
+        tmux
+        yazi
+    ]) ++ [
+        session
+    ] ++ (with unstable-pkgs; [
+        neovim
     ]);
 
 }
