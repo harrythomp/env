@@ -4,6 +4,10 @@ let
     cfg = config.env.homeServer.services.syncthing;
     allDevices = builtins.attrNames config.services.syncthing.settings.devices;
     enableFor = devices: builtins.elem config.networking.hostName devices;
+    mkFolderFor = devices: path: {
+        enable = enableFor devices;
+        inherit path devices;
+    };
 in
 {
 
@@ -57,41 +61,13 @@ in
                     };
                 };
                 folders = {
-                    books = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/books";
-                        devices = allDevices;
-                    };
-                    dev = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/dev";
-                        devices = allDevices;
-                    };
-                    documents = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/documents";
-                        devices = allDevices;
-                    };
-                    games = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/games";
-                        devices = allDevices;
-                    };
-                    music = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/music";
-                        devices = allDevices;
-                    };
-                    pictures = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/pictures";
-                        devices = allDevices;
-                    };
-                    work = {
-                        enable = enableFor allDevices;
-                        path = "${cfg.serviceLocation}/work";
-                        devices = allDevices;
-                    };
+                    books = mkFolderFor allDevices "${cfg.serviceLocation}/books";
+                    dev = mkFolderFor allDevices "${cfg.serviceLocation}/dev";
+                    documents = mkFolderFor allDevices "${cfg.serviceLocation}/documents";
+                    games = mkFolderFor allDevices "${cfg.serviceLocation}/games";
+                    music = mkFolderFor allDevices "${cfg.serviceLocation}/music";
+                    pictures = mkFolderFor allDevices "${cfg.serviceLocation}/pictures";
+                    work = mkFolderFor allDevices "${cfg.serviceLocation}/work";
                 };
                 options = {
                     localAnnounceEnabled = false;
