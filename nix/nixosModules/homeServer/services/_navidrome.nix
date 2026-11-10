@@ -3,7 +3,17 @@
 let
     cfg = config.env.homeServer.services.navidrome;
     navidromeUser = cfg.user;
-    navidromeTag = "0.64.1";
+
+    navidromeImage = pkgs.dockerTools.pullImage {
+        imageName = "deluan/navidrome";
+        imageDigest = "sha256:38dc2727bfcfd5ede290f8ada114fc90368146f265ae4701ddddbcbe2a44ee52";
+        hash =
+            if pkgs.go.GOARCH == "amd64" then "sha256-cvjgnX4hHIm0syuUTMr5iI0IpDg2tNCnpfbLAFTJjRc="
+            else if pkgs.go.GOARCH == "arm64" then "sha256-dcsfcaPQQ3Bf4LKKx6UVzjIRFvKDn0Mb+yzABNOG3Aw="
+            else "";
+        finalImageName = "deluan/navidrome";
+        finalImageTag = "0.64.2";
+    };
 in
 {
     options.env.homeServer.services.navidrome = {
@@ -44,7 +54,8 @@ in
 
         virtualisation.oci-containers.containers = {
             navidrome = {
-                image = "deluan/navidrome:${navidromeTag}";
+                image = "${navidromeImage.imageName}:${navidromeImage.imageTag}";
+                imageFile = navidromeImage;
                 volumes = [
                     "${cfg.serviceLocation}/data:/data:rw"
                     "${cfg.serviceLocation}/music:/music:ro"
