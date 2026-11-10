@@ -3,7 +3,17 @@
 let
     cfg = config.env.homeServer.services.radicale;
     radicaleUser = cfg.user;
-    radicaleTag = "3.8.0.0";
+
+    radicaleImage = pkgs.dockerTools.pullImage {
+        imageName = "tomsquest/docker-radicale";
+        imageDigest = "sha256:2f215d0e6a78ff68c280975af6ce580b05976f70c62b51640397e3eb5a7aa0e9";
+        hash =
+            if pkgs.go.GOARCH == "amd64" then "sha256-DcxBeMycMqXtNGME11IB/HrIOWERyLL3LoiSpLk3WY0="
+            else if pkgs.go.GOARCH == "arm64" then "sha256-j3HMdZWgFrLQCvsYG4ZPJiFjQOkDbT6m0sjK9Tr5h7k="
+            else "";
+        finalImageName = "tomsquest/docker-radicale";
+        finalImageTag = "3.9.0.0";
+    };
 in
 {
     options.env.homeServer.services.radicale = {
@@ -44,7 +54,8 @@ in
 
         virtualisation.oci-containers.containers = {
             radicale = {
-                image = "tomsquest/docker-radicale:${radicaleTag}";
+                image = "${radicaleImage.imageName}:${radicaleImage.imageTag}";
+                imageFile = radicaleImage;
                 volumes = [
                     "${cfg.serviceLocation}/config:/config:ro"
                     "${cfg.serviceLocation}/data:/data:rw"
