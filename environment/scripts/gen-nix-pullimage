@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+imageName="$1"
+imageTag="$2"
+
+if [ -z "$imageName" ] || [ -z "$imageTag" ]; then
+    echo "usage: $0 <image-name> <image-tag>"
+    exit 1
+fi
+
+amd64="$(nix run nixpkgs#nix-prefetch-docker -- --image-name "$imageName" --image-tag "$imageTag" --arch amd64 --os linux)"
+arm64="$(nix run nixpkgs#nix-prefetch-docker -- --image-name "$imageName" --image-tag "$imageTag" --arch arm64 --os linux)"
+
+nix-eval () {
+    eval="$1"
+    shift
+    nix eval --expr "let amd64 = $amd64; arm64 = $arm64; in $eval" "$@"
+}
+
+check-mismatch () {
+    property="$1"
+    if [ "$(nix-eval "amd64.$property == arm64.$property")" != 'true' ]; then
+        echo "mismatched $property"
+        echo "amd64: $(nix-eval "amd64.$property")"
+        echo "arm64: $(nix-eval "arm64.$property")"
+        exit 1
+    fi
+}
+
+get-property () {
+    property="$1"
+    arch="$2"
+    if [ -z "$arch" ]; then
+        arch="amd64"
+    fi
+    nix-eval "$arch.$property"
+}
+
+check-mismatch "imageName"
+check-mismatch "imageDigest"
+check-mismatch "finalImageName"
+check-mismatch "finalImageTag"
+
+cat << NIX
+pkgs.dockerTools.pullImage {
+    imageName = $(get-property imageName);
+    imageDigest = $(get-property imageDigest);
+    hash =
+        if pkgs.go.GOARCH == "amd64" then $(get-property hash amd64)
+        else if pkgs.go.GOARCH == "arm64" then $(get-property hash arm64)
+        else "";
+    finalImageName = $(get-property finalImageName);
+    finalImageTag = $(get-property finalImageTag);
+};
+NIX
