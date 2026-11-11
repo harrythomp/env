@@ -56,7 +56,12 @@ in
                 EnvironmentFile = cfg.resticEnvironmentFile;
                 ExecStart =
                     map
-                        (service: "${pkgs.restic}/bin/restic backup ${cfg.services.${service}.serviceLocation} --tag ${service}")
+                        (service:
+                            let
+                                filesFrom = pkgs.writeText "${service}-backup-paths.txt" (lib.concatLines cfg.services.${service}.backupLocations);
+                            in
+                            "${pkgs.restic}/bin/restic backup --files-from ${filesFrom} --tag ${service}"
+                        )
                         servicesWithBackupEnabled;
 
                 AmbientCapabilities = [ "CAP_DAC_READ_SEARCH" ];

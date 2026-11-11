@@ -8,6 +8,12 @@ let
         enable = enableFor devices;
         inherit path devices;
     };
+    folderPaths =
+        map
+            (folder: folder.path)
+            (builtins.filter
+                (folder: folder.enable)
+                (builtins.attrValues config.services.syncthing.settings.folders));
 in
 {
 
@@ -18,6 +24,11 @@ in
         serviceLocation = lib.mkOption {
             type = lib.types.str;
             default = "${config.env.homeServer.servicesLocation}/syncthing";
+        };
+
+        backupLocations = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = folderPaths;
         };
 
         backup = lib.mkOption {

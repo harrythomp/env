@@ -25,6 +25,21 @@ in
             default = "${config.env.homeServer.servicesLocation}/radicale";
         };
 
+        configLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/config";
+        };
+
+        dataLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/data";
+        };
+
+        backupLocations = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ cfg.configLocation cfg.dataLocation ];
+        };
+
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
@@ -57,8 +72,8 @@ in
                 image = "${radicaleImage.imageName}:${radicaleImage.imageTag}";
                 imageFile = radicaleImage;
                 volumes = [
-                    "${cfg.serviceLocation}/config:/config:ro"
-                    "${cfg.serviceLocation}/data:/data:rw"
+                    "${cfg.configLocation}:/config:ro"
+                    "${cfg.dataLocation}:/data:rw"
                 ];
                 ports = [
                     "5232:5232/tcp"

@@ -58,6 +58,26 @@ in
             default = "${config.env.homeServer.servicesLocation}/immich";
         };
 
+        postgresLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/postgres";
+        };
+
+        libraryLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/library";
+        };
+
+        envLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/.env";
+        };
+
+        backupLocations = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ cfg.postgresLocation cfg.libraryLocation cfg.envLocation ];
+        };
+
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
@@ -104,10 +124,10 @@ in
                 image = "${immichPostgresImage.imageName}:${immichPostgresImage.imageTag}";
                 imageFile = immichPostgresImage;
                 environmentFiles = [
-                    "${cfg.serviceLocation}/.env"
+                    cfg.envLocation
                 ];
                 volumes = [
-                    "${cfg.serviceLocation}/postgres:/var/lib/postgresql/data:rw"
+                    "${cfg.postgresLocation}:/var/lib/postgresql/data:rw"
                 ];
                 log-driver = "journald";
                 extraOptions = [
@@ -132,11 +152,11 @@ in
                 image = "${immichServerImage.imageName}:${immichServerImage.imageTag}";
                 imageFile = immichServerImage;
                 environmentFiles = [
-                    "${cfg.serviceLocation}/.env"
+                    cfg.envLocation
                 ];
                 volumes = [
                     "/etc/localtime:/etc/localtime:ro"
-                    "${cfg.serviceLocation}/library:/data:rw"
+                    "${cfg.libraryLocation}:/data:rw"
                 ];
                 ports = [
                     "2283:2283/tcp"

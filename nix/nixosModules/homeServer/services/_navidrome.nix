@@ -25,6 +25,21 @@ in
             default = "${config.env.homeServer.servicesLocation}/navidrome";
         };
 
+        musicLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/music";
+        };
+
+        dataLocation = lib.mkOption {
+            type = lib.types.str;
+            default = "${cfg.serviceLocation}/data";
+        };
+
+        backupLocations = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ cfg.musicLocation cfg.dataLocation ];
+        };
+
         backup = lib.mkOption {
             type = lib.types.bool;
             default = config.env.homeServer.backup;
@@ -57,8 +72,8 @@ in
                 image = "${navidromeImage.imageName}:${navidromeImage.imageTag}";
                 imageFile = navidromeImage;
                 volumes = [
-                    "${cfg.serviceLocation}/data:/data:rw"
-                    "${cfg.serviceLocation}/music:/music:ro"
+                    "${cfg.dataLocation}:/data:rw"
+                    "${cfg.musicLocation}:/music:ro"
                 ];
                 ports = [
                     "4533:4533/tcp"
