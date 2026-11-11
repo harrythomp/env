@@ -3,7 +3,50 @@
 let
     cfg = config.env.homeServer.services.immich;
     immichUser = cfg.user;
-    immichTag = "v3.2.2";
+
+    immichMachineLearningImage = pkgs.dockerTools.pullImage {
+        imageName = "ghcr.io/immich-app/immich-machine-learning";
+        imageDigest = "sha256:14367bfb374b8576ddf49abd67c5ca0190a4c7fcf6303cdad65d7f7bf1a50bc2";
+        hash =
+            if pkgs.go.GOARCH == "amd64" then "sha256-FUoA2HgRwX2z/Dk6Rdp6EM/sv+yz0AeDBMxZ4ZoOt2s="
+            else if pkgs.go.GOARCH == "arm64" then "sha256-YPGcsI6NIlzvti17o/NdGQT3Ff3gOsWOqQtlisWMb3U="
+            else "";
+        finalImageName = "ghcr.io/immich-app/immich-machine-learning";
+        finalImageTag = "v3.3.6";
+    };
+
+    immichServerImage = pkgs.dockerTools.pullImage {
+        imageName = "ghcr.io/immich-app/immich-server";
+        imageDigest = "sha256:e1981983b1c13f6024b57d72e7ecae3342eed1581201ab09fb248932d86c593a";
+        hash =
+            if pkgs.go.GOARCH == "amd64" then "sha256-14QVW7jfVYqhxv05d/4LNa0sFiTZREcu+uBxUfv4TXs="
+            else if pkgs.go.GOARCH == "arm64" then "sha256-d6sfdisHs4Q5oQlKrDH5pGa7af9lxgMDvkGxgjrCafY="
+            else "";
+        finalImageName = "ghcr.io/immich-app/immich-server";
+        finalImageTag = "v3.3.6";
+    };
+
+    immichPostgresImage = pkgs.dockerTools.pullImage {
+        imageName = "ghcr.io/immich-app/postgres";
+        imageDigest = "sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
+        hash =
+            if pkgs.go.GOARCH == "amd64" then "sha256-YNxadMZRLd2Wky6UvZFTcJ+KXFxg51E4zPdEAG7HtPk="
+            else if pkgs.go.GOARCH == "arm64" then "sha256-LzO1N6q/D3YWKBSA+Ui15gmHZBZajwvpiXLNF5gcBpI="
+            else "";
+        finalImageName = "ghcr.io/immich-app/postgres";
+        finalImageTag = "14-vectorchord0.4.3-pgvectors0.2.0";
+    };
+
+    immichRedisImage = pkgs.dockerTools.pullImage {
+        imageName = "docker.io/valkey/valkey";
+        imageDigest = "sha256:3add1a336a920ea54770a001ab6feb3da5fceea96a40373a3a2cd469b815f0b7";
+        hash =
+            if pkgs.go.GOARCH == "amd64" then "sha256-9umptl90X5t2Ny4vSC7Rvu1iP44QnERhGUlRRymnJvQ="
+            else if pkgs.go.GOARCH == "arm64" then "sha256-+jtI+aXnABS5T5yaET1LX5LvxNE/2u14LbVK5iyO9DQ="
+            else "";
+        finalImageName = "docker.io/valkey/valkey";
+        finalImageTag = "9";
+    };
 in
 {
     options.env.homeServer.services.immich = {
@@ -45,7 +88,8 @@ in
         virtualisation.oci-containers.containers = {
 
             "immich_machine_learning" = {
-                image = "ghcr.io/immich-app/immich-machine-learning:${immichTag}";
+                image = "${immichMachineLearningImage.imageName}:${immichMachineLearningImage.imageTag}";
+                imageFile = immichMachineLearningImage;
                 volumes = [
                     "immich_model_cache:/cache:rw"
                 ];
@@ -57,7 +101,8 @@ in
             };
 
             "immich_postgres" = {
-                image = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
+                image = "${immichPostgresImage.imageName}:${immichPostgresImage.imageTag}";
+                imageFile = immichPostgresImage;
                 environmentFiles = [
                     "${cfg.serviceLocation}/.env"
                 ];
@@ -73,7 +118,8 @@ in
             };
 
             "immich_redis" = {
-                image = "docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9";
+                image = "${immichRedisImage.imageName}:${immichRedisImage.imageTag}";
+                imageFile = immichRedisImage;
                 log-driver = "journald";
                 extraOptions = [
                     "--health-cmd=redis-cli ping || exit 1"
@@ -83,7 +129,8 @@ in
             };
 
             "immich_server" = {
-                image = "ghcr.io/immich-app/immich-server:${immichTag}";
+                image = "${immichServerImage.imageName}:${immichServerImage.imageTag}";
+                imageFile = immichServerImage;
                 environmentFiles = [
                     "${cfg.serviceLocation}/.env"
                 ];
@@ -128,7 +175,6 @@ in
                 };
             };
         };
-
 
     };
 }
