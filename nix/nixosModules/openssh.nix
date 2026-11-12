@@ -1,6 +1,22 @@
-inputs:
+inputs: { lib, config, ... }:
 
+let
+    sftpGroup = "sftp-only";
+    sftpUsers =
+        map
+            (user: user.name)
+            (builtins.filter
+                (user: builtins.elem sftpGroup user.extraGroups)
+                (builtins.attrValues config.users.users));
+in
 {
+
+    users.groups.${sftpGroup} = {};
+
+    systemd.tmpfiles.rules =
+        map
+            (user: "d /var/lib/${user} 0750 root ${config.users.users.${user}.group} -")
+            sftpUsers;
 
     services.openssh = {
         enable = true;
@@ -13,6 +29,12 @@ inputs:
             X11Forwarding = false;
             PermitRootLogin = "no"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
         };
+        extraConfig = ''
+            Match group ${sftpGroup}
+                DisableForwarding yes
+                ForceCommand internal-sftp
+                ChrootDirectory /var/lib/%u
+        '';
     };
 
 }

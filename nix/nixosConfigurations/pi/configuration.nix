@@ -1,4 +1,4 @@
-{ self, ... }@inputs:
+{ self, ... }@inputs: { config, ... }:
 
 {
 
@@ -42,6 +42,15 @@
             radicale.enable = true;
         };
         backup = true;
+    };
+
+    users.users.${config.env.homeServer.services.syncthing.user} =
+    let
+        adminKeys = config.users.users.admin.openssh.authorizedKeys.keys;
+    in
+    {
+        openssh.authorizedKeys.keys = adminKeys;
+        extraGroups = [ "sftp-only" ];
     };
 
     # This value determines the NixOS release from which the default
