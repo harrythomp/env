@@ -1,4 +1,4 @@
-{ self, ... }@inputs: { config, ... }:
+{ self, ... }@inputs: { config, lib, ... }:
 
 {
 
@@ -44,13 +44,10 @@
         backup = true;
     };
 
-    users.users.${config.env.homeServer.services.syncthing.user} =
-    let
-        adminKeys = config.users.users.admin.openssh.authorizedKeys.keys;
-    in
-    {
-        openssh.authorizedKeys.keys = adminKeys;
-        extraGroups = [ "sftp-only" ];
+    users.users.syncthing = {
+        openssh.authorizedKeys.keys = config.users.users.admin.openssh.authorizedKeys.keys;
+        extraGroups = [ "sftp" ];
+        createHome = lib.mkForce false; # /var/lib/syncthing must be owned by root for sftp chroot. openssh.nix module will create the directory
     };
 
     # This value determines the NixOS release from which the default
