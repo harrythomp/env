@@ -1,6 +1,7 @@
 { pkgs, lib, config, ... }:
 
 let
+    defaultUser = "navidrome";
     cfg = config.env.homeServer.services.navidrome;
     navidromeUser = cfg.user;
 
@@ -47,18 +48,18 @@ in
 
         user = lib.mkOption {
             type = lib.types.str;
-            default = "navidrome";
+            default = defaultUser;
         };
 
     };
 
     config = lib.mkIf cfg.enable {
 
-        users = {
-            groups.navidrome = {};
-            users.navidrome = {
+        users = lib.mkIf (cfg.user == defaultUser) {
+            groups.${defaultUser} = {};
+            users.${defaultUser} = {
                 isSystemUser = true;
-                group = "navidrome";
+                group = defaultUser;
                 description = "Navidrome service runner";
                 linger = true;
                 home = cfg.serviceLocation;

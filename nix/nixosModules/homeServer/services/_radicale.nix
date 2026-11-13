@@ -1,6 +1,7 @@
 { pkgs, lib, config, ... }:
 
 let
+    defaultUser = "radicale";
     cfg = config.env.homeServer.services.radicale;
     radicaleUser = cfg.user;
 
@@ -47,18 +48,18 @@ in
 
         user = lib.mkOption {
             type = lib.types.str;
-            default = "radicale";
+            default = defaultUser;
         };
 
     };
 
     config = lib.mkIf cfg.enable {
 
-        users = {
-            groups.radicale = {};
-            users.radicale = {
+        users = lib.mkIf (cfg.user == defaultUser) {
+            groups.${defaultUser} = {};
+            users.${defaultUser} = {
                 isSystemUser = true;
-                group = "radicale";
+                group = defaultUser;
                 description = "Radicale service runner";
                 linger = true;
                 home = cfg.serviceLocation;

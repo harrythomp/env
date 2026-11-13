@@ -1,6 +1,7 @@
 { pkgs, lib, config, ... }:
 
 let
+    defaultUser = "immich";
     cfg = config.env.homeServer.services.immich;
     immichUser = cfg.user;
 
@@ -85,18 +86,18 @@ in
 
         user = lib.mkOption {
             type = lib.types.str;
-            default = "immich";
+            default = defaultUser;
         };
 
     };
 
     config = lib.mkIf cfg.enable {
 
-        users = {
-            groups.immich = {};
-            users.immich = {
+        users = lib.mkIf (cfg.user == defaultUser) {
+            groups.${defaultUser} = {};
+            users.${defaultUser} = {
                 isSystemUser = true;
-                group = "immich";
+                group = defaultUser;
                 description = "Immich service runner";
                 linger = true;
                 home = cfg.serviceLocation;
