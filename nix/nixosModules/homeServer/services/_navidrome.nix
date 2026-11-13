@@ -83,6 +83,7 @@ in
                 extraOptions = [
                     "--userns=keep-id"
                     "--network-alias=navidrome"
+                    "--network=navidrome"
                 ];
                 podman.user = navidromeUser;
             };

@@ -31,12 +31,6 @@ let
         requires = [ "${cfg.serviceName}.service" ];
     }));
 
-    mkNetworkOciContainerPatches = cfg: lib.genAttrs (cfg.containers) (_: {
-        extraOptions = [
-            "--network=${cfg.name}"
-        ];
-    });
-
     mkVolume = cfg: 
     {
         ${cfg.serviceName} = {
@@ -211,10 +205,7 @@ in
 
         systemd.targets = lib.mkMerge (map mkRootTarget rootTargets);
 
-        virtualisation.oci-containers.containers = lib.mkMerge (
-            (map mkNetworkOciContainerPatches networks)
-            ++ (map mkRootTargetOciContainerPatches rootTargets)
-        );
+        virtualisation.oci-containers.containers = lib.mkMerge (map mkRootTargetOciContainerPatches rootTargets);
 
     };
 

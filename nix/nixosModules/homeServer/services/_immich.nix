@@ -117,6 +117,7 @@ in
                 log-driver = "journald";
                 extraOptions = [
                     "--network-alias=immich-machine-learning"
+                    "--network=immich"
                 ];
                 podman.user = immichUser;
             };
@@ -133,6 +134,7 @@ in
                 log-driver = "journald";
                 extraOptions = [
                     "--network-alias=database"
+                    "--network=immich"
                     "--shm-size=134217728"
                 ];
                 podman.user = immichUser;
@@ -144,6 +146,7 @@ in
                 log-driver = "journald";
                 extraOptions = [
                     "--health-cmd=redis-cli ping || exit 1"
+                    "--network=immich"
                     "--network-alias=redis"
                 ];
                 podman.user = immichUser;
@@ -169,6 +172,7 @@ in
                 log-driver = "journald";
                 extraOptions = [
                     "--network-alias=immich-server"
+                    "--network=immich"
                 ];
                 podman.user = immichUser;
             };

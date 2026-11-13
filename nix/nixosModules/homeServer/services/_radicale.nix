@@ -92,6 +92,7 @@ in
                     "--memory=268435456b"
                     "--network-alias=radicale"
                     "--security-opt=no-new-privileges:true"
+                    "--network=radicale"
                 ];
                 podman.user = radicaleUser;
             };
