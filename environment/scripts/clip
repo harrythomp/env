@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+if [ -z "$EDITOR" ]; then
+    echo "Missing EDITOR"
+    exit 1
+fi
+
+COPY=${COPY:-"wl-copy"}
+if ! command -v "$COPY" &> /dev/null; then
+    echo "Cannot find COPY command: $COPY"
+    exit 1
+fi
+
+file=$(mktemp)
+trap 'rm -f $file' EXIT
+
+if [ ! -t 0 ]; then
+    cat > "$file"
+elif [ "$1" = "-p" ] || [ "$1" = "--paste" ]; then
+    PASTE=${PASTE:-"wl-paste"}
+    if ! command -v "$PASTE" &> /dev/null; then
+        echo "Cannot find PASTE command: $PASTE"
+        exit 1
+    fi
+    "$PASTE" > "$file"
+fi
+
+"$EDITOR" "$file"
+
+if [ -s "$file" ]; then
+    if [ "$(tail -c 1 "$file" | wc -l)" -eq 1 ]; then
+        truncate -s -1 "$file"
+    fi
+    "$COPY" < "$file"
+fi

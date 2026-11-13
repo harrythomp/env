@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-file=$(mktemp)
-trap 'rm -f $file' EXIT
-nvim "$file"
-if [ -s "$file" ]; then
-    wl-copy < "$file"
-fi
