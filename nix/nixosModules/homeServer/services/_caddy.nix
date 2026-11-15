@@ -61,6 +61,25 @@ in
             caddy = 
             let
                 config = pkgs.writeTextDir "Caddyfile" ''
+                    {
+                        auto_https off
+                    }
+
+                    http://immich.home {
+                        reverse_proxy http://immich.home:2283
+                    }
+
+                    http://radicale.home {
+                        reverse_proxy http://radicale.home:5232
+                    }
+
+                    http://navidrome.home {
+                        reverse_proxy http://navidrome.home:4533
+                    }
+
+                    http://dns.home {
+                        reverse_proxy http://dns.home:5380
+                    }
                 '';
             in
             {

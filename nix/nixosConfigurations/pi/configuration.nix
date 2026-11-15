@@ -41,6 +41,7 @@
             navidrome.enable = true;
             radicale.enable = true;
             technitium.enable = true;
+            caddy.enable = true;
         };
         backup = true;
     };
