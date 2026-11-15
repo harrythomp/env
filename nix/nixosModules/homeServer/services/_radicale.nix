@@ -3,7 +3,6 @@
 let
     defaultUser = "radicale";
     cfg = config.env.homeServer.services.radicale;
-    radicaleUser = cfg.user;
 
     radicaleImage = pkgs.dockerTools.pullImage {
         imageName = "tomsquest/docker-radicale";
@@ -94,7 +93,7 @@ in
                     "--security-opt=no-new-privileges:true"
                     "--network=radicale"
                 ];
-                podman.user = radicaleUser;
+                podman.user = cfg.user;
             };
         };
 
@@ -102,7 +101,7 @@ in
             networks = {
                 radicale = {
                     containers = [ "radicale" ];
-                    user = radicaleUser;
+                    user = cfg.user;
                 };
             };
             rootTargets = {

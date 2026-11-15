@@ -3,7 +3,6 @@
 let
     defaultUser = "navidrome";
     cfg = config.env.homeServer.services.navidrome;
-    navidromeUser = cfg.user;
 
     navidromeImage = pkgs.dockerTools.pullImage {
         imageName = "deluan/navidrome";
@@ -85,7 +84,7 @@ in
                     "--network-alias=navidrome"
                     "--network=navidrome"
                 ];
-                podman.user = navidromeUser;
+                podman.user = cfg.user;
             };
         };
 
@@ -93,7 +92,7 @@ in
             networks = {
                 navidrome = {
                     containers = [ "navidrome" ];
-                    user = navidromeUser;
+                    user = cfg.user;
                 };
             };
             rootTargets = {

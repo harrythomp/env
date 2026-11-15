@@ -3,7 +3,6 @@
 let
     defaultUser = "immich";
     cfg = config.env.homeServer.services.immich;
-    immichUser = cfg.user;
 
     immichMachineLearningImage = pkgs.dockerTools.pullImage {
         imageName = "ghcr.io/immich-app/immich-machine-learning";
@@ -119,7 +118,7 @@ in
                     "--network-alias=immich-machine-learning"
                     "--network=immich"
                 ];
-                podman.user = immichUser;
+                podman.user = cfg.user;
             };
 
             "immich_postgres" = {
@@ -137,7 +136,7 @@ in
                     "--network=immich"
                     "--shm-size=134217728"
                 ];
-                podman.user = immichUser;
+                podman.user = cfg.user;
             };
 
             "immich_redis" = {
@@ -149,7 +148,7 @@ in
                     "--network=immich"
                     "--network-alias=redis"
                 ];
-                podman.user = immichUser;
+                podman.user = cfg.user;
             };
 
             "immich_server" = {
@@ -174,7 +173,7 @@ in
                     "--network-alias=immich-server"
                     "--network=immich"
                 ];
-                podman.user = immichUser;
+                podman.user = cfg.user;
             };
 
         };
@@ -183,13 +182,13 @@ in
             networks = {
                 immich = {
                     containers = [ "immich_machine_learning" "immich_postgres" "immich_redis" "immich_server" ];
-                    user = immichUser;
+                    user = cfg.user;
                 };
             };
             volumes = {
                 "immich_model_cache" = {
                     containers = [ "immich_machine_learning" ];
-                    user = immichUser;
+                    user = cfg.user;
                 };
             };
             rootTargets = {
