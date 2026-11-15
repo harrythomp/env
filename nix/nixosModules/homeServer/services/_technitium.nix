@@ -99,12 +99,8 @@ in
                 log-driver = "journald";
                 extraOptions = [
                     "--health-cmd=curl -f http://127.0.0.1:5380/api/dnsClient/healthCheck | grep '\"status\":\"ok\"'"
-                    "--userns=keep-id"
                     "--network=technitium"
                 ];
-                capabilities = {
-                    CAP_NET_BIND_SERVICE = true;
-                };
                 podman.user = cfg.user;
             };
         };
