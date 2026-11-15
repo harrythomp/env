@@ -7,6 +7,9 @@ let
     volumes = builtins.attrValues cfg.volumes;
 
     mkNetwork = cfg: 
+    let
+        dnsFlag = if cfg.disableDNS then "--disable-dns" else "";
+    in
     {
         ${cfg.serviceName} = {
             path = [ pkgs.podman "/run/wrappers" ];
@@ -17,7 +20,7 @@ let
                 User = cfg.user;
             };
             script = ''
-                podman network inspect ${cfg.name} || podman network create ${cfg.name}
+                podman network inspect ${cfg.name} || podman network create ${dnsFlag} ${cfg.name}
             '';
         };
     };
@@ -110,6 +113,11 @@ in
 
                     user = lib.mkOption {
                         type = lib.types.str;
+                    };
+
+                    disableDNS = lib.mkOption {
+                        type = lib.types.bool;
+                        default = false;
                     };
 
                 };
