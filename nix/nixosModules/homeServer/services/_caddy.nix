@@ -60,25 +60,33 @@ in
         virtualisation.oci-containers.containers = {
             caddy = 
             let
-                config = pkgs.writeTextDir "Caddyfile" ''
+                services = config.env.homeServer.services;
+                getDomain = enable: fallback: if enable then "host.containers.internal" else fallback;
+
+                immichDomain = getDomain services.immich.enable "immich.home";
+                radicaleDomain = getDomain services.radicale.enable "radicale.home";
+                navidromeDomain = getDomain services.navidrome.enable "navidrome.home";
+                dnsDomain = getDomain services.technitium.enable "dns.home";
+
+                caddyConfig = pkgs.writeTextDir "Caddyfile" ''
                     {
                         auto_https off
                     }
 
                     http://immich.home {
-                        reverse_proxy http://immich.home:2283
+                        reverse_proxy http://${immichDomain}:2283
                     }
 
                     http://radicale.home {
-                        reverse_proxy http://radicale.home:5232
+                        reverse_proxy http://${radicaleDomain}:5232
                     }
 
                     http://navidrome.home {
-                        reverse_proxy http://navidrome.home:4533
+                        reverse_proxy http://${navidromeDomain}:4533
                     }
 
                     http://dns.home {
-                        reverse_proxy http://dns.home:5380
+                        reverse_proxy http://${dnsDomain}:5380
                     }
                 '';
             in
@@ -86,12 +94,12 @@ in
                 image = "${caddyImage.imageName}:${caddyImage.imageTag}";
                 imageFile = caddyImage;
                 volumes = [
-                    "${config}:/etc/caddy:ro"
+                    "${caddyConfig}:/etc/caddy:ro"
                     "caddy_data:/data:rw"
                     "caddy_config:/config:rw"
                 ];
                 ports = [
-                    "80:80/tcp"
+                    "8080:80/tcp"
                 ];
                 log-driver = "journald";
                 extraOptions = [
@@ -99,13 +107,6 @@ in
                     "--network=caddy"
                 ];
                 podman.user = cfg.user;
-            };
-        };
-
-        systemd.services.podman-caddy = {
-            serviceConfig = {
-                AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
-                CapabilityBoundingSet = [ "CAP_NET_BIND_SERVICE" ];
             };
         };
 
@@ -133,6 +134,16 @@ in
                     volumes = [ "caddy_data" "caddy_config" ];
                 };
             };
+        };
+
+        networking.nat = {
+            enable = true;
+            extraCommands = lib.mkIf (config.networking.nat.externalInterface != null) ''
+               iptables -w -t nat -A nixos-nat-pre \
+                 -i ${config.networking.nat.externalInterface} \
+                 -p tcp --dport 80 \
+                 -j REDIRECT --to-ports 8080
+            '';
         };
 
     };

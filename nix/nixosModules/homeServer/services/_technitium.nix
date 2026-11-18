@@ -86,8 +86,8 @@ in
                 ports = [
                     "5380:5380/tcp" #DNS web console (HTTP)
                   # "53443:53443/tcp" #DNS web console (HTTPS)
-                    "53:53/udp" #DNS service
-                    "53:53/tcp" #DNS service
+                    "5353:53/udp" #DNS service
+                    "5353:53/tcp" #DNS service
                   # "853:853/udp" #DNS-over-QUIC service
                   # "853:853/tcp" #DNS-over-TLS service
                   # "443:443/udp" #DNS-over-HTTPS service (HTTP/3)
@@ -126,6 +126,20 @@ in
                     networks = [ "technitium" ];
                 };
             };
+        };
+
+        networking.nat = {
+            enable = true;
+            extraCommands = lib.mkIf (config.networking.nat.externalInterface != null) ''
+               iptables -w -t nat -A nixos-nat-pre \
+                 -i ${config.networking.nat.externalInterface} \
+                 -p udp --dport 53 \
+                 -j REDIRECT --to-ports 5353
+               iptables -w -t nat -A nixos-nat-pre \
+                 -i ${config.networking.nat.externalInterface} \
+                 -p tcp --dport 53 \
+                 -j REDIRECT --to-ports 5353
+            '';
         };
 
     };

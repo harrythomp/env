@@ -52,6 +52,8 @@
         createHome = lib.mkForce false; # /var/lib/syncthing must be owned by root for sftp chroot. openssh.nix module will create the directory
     };
 
+    networking.nat.externalInterface = config.services.tailscale.interfaceName;
+
     # This value determines the NixOS release from which the default
     # settings for stateful data, like file locations and database versions
     # on your system were taken. It‘s perfectly fine and recommended to leave
