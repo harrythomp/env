@@ -107,7 +107,7 @@ in
 
         virtualisation.oci-containers.containers = {
 
-            "immich_machine_learning" = {
+            immich_machine_learning = {
                 image = "${immichMachineLearningImage.imageName}:${immichMachineLearningImage.imageTag}";
                 imageFile = immichMachineLearningImage;
                 volumes = [
@@ -121,7 +121,7 @@ in
                 podman.user = cfg.user;
             };
 
-            "immich_postgres" = {
+            immich_postgres = {
                 image = "${immichPostgresImage.imageName}:${immichPostgresImage.imageTag}";
                 imageFile = immichPostgresImage;
                 environmentFiles = [
@@ -139,7 +139,7 @@ in
                 podman.user = cfg.user;
             };
 
-            "immich_redis" = {
+            immich_redis = {
                 image = "${immichRedisImage.imageName}:${immichRedisImage.imageTag}";
                 imageFile = immichRedisImage;
                 log-driver = "journald";
@@ -151,7 +151,7 @@ in
                 podman.user = cfg.user;
             };
 
-            "immich_server" = {
+            immich_server = {
                 image = "${immichServerImage.imageName}:${immichServerImage.imageTag}";
                 imageFile = immichServerImage;
                 environmentFiles = [
@@ -178,25 +178,16 @@ in
 
         };
 
-        env.homeServer.containers = {
-            networks = {
-                immich = {
-                    containers = [ "immich_machine_learning" "immich_postgres" "immich_redis" "immich_server" ];
-                    user = cfg.user;
+        env.containerGroups = {
+            immich = {
+                user = cfg.user;
+                networks = {
+                    immich = {};
                 };
-            };
-            volumes = {
-                "immich_model_cache" = {
-                    containers = [ "immich_machine_learning" ];
-                    user = cfg.user;
+                volumes = {
+                    immich_model_cache = {};
                 };
-            };
-            rootTargets = {
-                immich = {
-                    containers = [ "immich_machine_learning" "immich_postgres" "immich_redis" "immich_server" ];
-                    networks = [ "immich" ];
-                    volumes = [ "immich_model_cache" ];
-                };
+                containers = [ "immich_machine_learning" "immich_postgres" "immich_redis" "immich_server" ];
             };
         };
 

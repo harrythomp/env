@@ -110,29 +110,17 @@ in
             };
         };
 
-        env.homeServer.containers = {
-            networks = {
-                caddy = {
-                    containers = [ "caddy" ];
-                    user = cfg.user;
+        env.containerGroups = {
+            caddy = {
+                user = cfg.user;
+                networks = {
+                    caddy = {};
                 };
-            };
-            volumes = {
-                "caddy_data" = {
-                    containers = [ "caddy" ];
-                    user = cfg.user;
+                volumes = {
+                    caddy_data = {};
+                    caddy_config = {};
                 };
-                "caddy_config" = {
-                    containers = [ "caddy" ];
-                    user = cfg.user;
-                };
-            };
-            rootTargets = {
-                caddy = {
-                    containers = [ "caddy" ];
-                    networks = [ "caddy" ];
-                    volumes = [ "caddy_data" "caddy_config" ];
-                };
+                containers = [ "caddy" ];
             };
         };
 

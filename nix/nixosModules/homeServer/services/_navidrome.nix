@@ -88,18 +88,13 @@ in
             };
         };
 
-        env.homeServer.containers = {
-            networks = {
-                navidrome = {
-                    containers = [ "navidrome" ];
-                    user = cfg.user;
+        env.containerGroups = {
+            navidrome = {
+                user = cfg.user;
+                networks = {
+                    navidrome = {};
                 };
-            };
-            rootTargets = {
-                navidrome = {
-                    containers = [ "navidrome" ];
-                    networks = [ "navidrome" ];
-                };
+                containers = [ "navidrome" ];
             };
         };
 

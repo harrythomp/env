@@ -112,19 +112,13 @@ in
             };
         };
 
-        env.homeServer.containers = {
-            networks = {
-                technitium = {
-                    containers = [ "technitium" ];
-                    user = cfg.user;
-                    disableDNS = true;
+        env.containerGroups = {
+            technitium = {
+                user = cfg.user;
+                networks = {
+                    technitium = { disableDNS = true; };
                 };
-            };
-            rootTargets = {
-                technitium = {
-                    containers = [ "technitium" ];
-                    networks = [ "technitium" ];
-                };
+                containers = [ "technitium" ];
             };
         };
 

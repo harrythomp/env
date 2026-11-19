@@ -97,18 +97,13 @@ in
             };
         };
 
-        env.homeServer.containers = {
-            networks = {
-                radicale = {
-                    containers = [ "radicale" ];
-                    user = cfg.user;
+        env.containerGroups = {
+            radicale = {
+                user = cfg.user;
+                networks = {
+                    radicale = {};
                 };
-            };
-            rootTargets = {
-                radicale = {
-                    containers = [ "radicale" ];
-                    networks = [ "radicale" ];
-                };
+                containers = [ "radicale" ];
             };
         };
 

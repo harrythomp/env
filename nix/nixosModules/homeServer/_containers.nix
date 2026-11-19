@@ -1,199 +1,170 @@
 { lib, config, pkgs, ... }:
 
 let
-    cfg = config.env.homeServer.containers;
-    networks = builtins.attrValues cfg.networks;
-    rootTargets = builtins.attrValues cfg.rootTargets;
-    volumes = builtins.attrValues cfg.volumes;
+    containerGroups = builtins.attrValues config.env.containerGroups;
 
-    mkNetwork = cfg: 
+    mkNetwork = user: targetName: network:
     let
-        dnsFlag = if cfg.disableDNS then "--disable-dns" else "";
+        dnsFlag = if network.disableDNS then "--disable-dns" else "";
     in
     {
-        ${cfg.serviceName} = {
+        ${network.serviceName} = {
             path = [ pkgs.podman "/run/wrappers" ];
             serviceConfig = {
                 Type = "oneshot";
                 RemainAfterExit = true;
-                ExecStop = "${pkgs.podman}/bin/podman network rm -f ${cfg.name}";
-                User = cfg.user;
+                ExecStop = "${pkgs.podman}/bin/podman network rm -f ${network.name}";
+                User = user;
             };
             script = ''
-                podman network inspect ${cfg.name} || podman network create ${dnsFlag} ${cfg.name}
+                podman network inspect ${network.name} || podman network create ${dnsFlag} ${network.name}
             '';
+            partOf = [ "${targetName}.target" ];
+            wantedBy = [ "${targetName}.target" ];
         };
     };
 
-    mkNetworkServicePatches = cfg:
+    mkVolume = user: targetName: volume:
+    {
+        ${volume.serviceName} = {
+            path = [ pkgs.podman "/run/wrappers" ];
+            serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                User = user;
+            };
+            script = ''
+                podman volume inspect ${volume.name} || podman volume create ${volume.name}
+            '';
+            partOf = [ "${targetName}.target" ];
+            wantedBy = [ "${targetName}.target" ];
+        };
+    };
+
+    mkServiceDependencyPatches = containers: cfg:
     let
-        containerServiceNames = map (name: config.virtualisation.oci-containers.containers.${name}.serviceName) cfg.containers;
+        containerServiceNames = map (name: config.virtualisation.oci-containers.containers.${name}.serviceName) containers;
     in
     (lib.genAttrs containerServiceNames (_: {
         after = [ "${cfg.serviceName}.service" ];
         requires = [ "${cfg.serviceName}.service" ];
     }));
 
-    mkVolume = cfg: 
+    mkServiceRootTargetPatches = targetName: container:
+    let
+        containerServiceName = config.virtualisation.oci-containers.containers.${container}.serviceName;
+    in
     {
-        ${cfg.serviceName} = {
-            path = [ pkgs.podman "/run/wrappers" ];
-            serviceConfig = {
-                Type = "oneshot";
-                RemainAfterExit = true;
-                User = cfg.user;
-            };
-            script = ''
-                podman volume inspect ${cfg.name} || podman volume create ${cfg.name}
-            '';
+        ${containerServiceName} = {
+            partOf = [ "${targetName}.target" ];
+            wantedBy = [ "${targetName}.target" ];
         };
     };
 
-    mkVolumeServicePatches = cfg:
+    mkServices = group:
     let
-        containerServiceNames = map (name: config.virtualisation.oci-containers.containers.${name}.serviceName) cfg.containers;
+        networks = builtins.attrValues group.networks;
+        volumes = builtins.attrValues group.volumes;
+        containers = group.containers;
+        user = group.user;
+        targetName = group.targetName;
     in
-    (lib.genAttrs containerServiceNames (_: {
-        after = [ "${cfg.serviceName}.service" ];
-        requires = [ "${cfg.serviceName}.service" ];
-    }));
+    lib.mkMerge (
+        (map (mkNetwork user targetName) networks)
+        ++ (map (mkVolume user targetName) volumes)
+        ++ (map (mkServiceDependencyPatches containers) networks)
+        ++ (map (mkServiceDependencyPatches containers) volumes)
+        ++ (map (mkServiceRootTargetPatches targetName) containers)
+    );
 
-    mkRootTarget = cfg:
-    let
-        containerServiceNames = map (name: config.virtualisation.oci-containers.containers.${name}.serviceName) cfg.containers;
-        networkServiceNames = map (name: config.env.homeServer.containers.networks.${name}.serviceName) cfg.networks;
-    in
+    mkRootTarget = group:
     {
-        ${cfg.targetName} = {
+        ${group.targetName} = {
             unitConfig = {
-                Description = "${cfg.name} root target";
+                Description = "${group.name} root target";
             };
-            wantedBy = [ ] ++ (lib.optional cfg.autoStart "multi-user.target");
+            wantedBy = [ ] ++ (lib.optional group.autoStart "multi-user.target");
         };
     };
 
-    mkRootTargetServicePatches = cfg:
-    let
-        containerServiceNames = map (name: config.virtualisation.oci-containers.containers.${name}.serviceName) cfg.containers;
-        networkServiceNames = map (name: config.env.homeServer.containers.networks.${name}.serviceName) cfg.networks;
-        volumeServiceNames = map (name: config.env.homeServer.containers.volumes.${name}.serviceName) cfg.volumes;
-    in
-    lib.genAttrs (containerServiceNames ++ networkServiceNames ++ volumeServiceNames) (_: {
-        partOf = [ "${cfg.targetName}.target" ];
-        wantedBy = [ "${cfg.targetName}.target" ];
-    });
-
-    mkRootTargetOciContainerPatches = cfg: lib.genAttrs (cfg.containers) (_: {
+    mkOciContainerRootTargetPatches = group: lib.genAttrs (group.containers) (_: {
         autoStart = lib.mkForce false;
     });
 in
 {
 
-    options.env.homeServer.containers = {
-
-        networks = lib.mkOption {
-            default = {};
-            type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
-                options = {
-
-                    name = lib.mkOption {
-                        type = lib.types.str;
-                        default = name;
-                    };
-
-                    serviceName = lib.mkOption {
-                        type = lib.types.str;
-                        default = "podman-network-${name}";
-                    };
-
-                    containers = lib.mkOption {
-                        type = lib.types.listOf lib.types.str;
-                        default = [];
-                    };
-
-                    user = lib.mkOption {
-                        type = lib.types.str;
-                    };
-
-                    disableDNS = lib.mkOption {
-                        type = lib.types.bool;
-                        default = false;
-                    };
-
+    options.env.containerGroups = lib.mkOption {
+        default = {};
+        type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
+            options = {
+                name = lib.mkOption {
+                    type = lib.types.str;
+                    default = name;
                 };
-            }));
-        };
 
-        volumes = lib.mkOption {
-            default = {};
-            type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
-                options = {
-
-                    name = lib.mkOption {
-                        type = lib.types.str;
-                        default = name;
-                    };
-
-                    serviceName = lib.mkOption {
-                        type = lib.types.str;
-                        default = "podman-volume-${name}";
-                    };
-
-                    containers = lib.mkOption {
-                        type = lib.types.listOf lib.types.str;
-                        default = [];
-                    };
-
-                    user = lib.mkOption {
-                        type = lib.types.str;
-                    };
-
+                user = lib.mkOption {
+                    type = lib.types.str;
                 };
-            }));
-        };
 
-        rootTargets = lib.mkOption {
-            default = {};
-            type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
-                options = {
-
-                    name = lib.mkOption {
-                        type = lib.types.str;
-                        default = name;
-                    };
-
-                    targetName = lib.mkOption {
-                        type = lib.types.str;
-                        default = "${name}-root";
-                    };
-
-                    containers = lib.mkOption {
-                        type = lib.types.listOf lib.types.str;
-                        default = [];
-                    };
-
-                    networks = lib.mkOption {
-                        type = lib.types.listOf lib.types.str;
-                        default = [];
-                    };
-
-                    volumes = lib.mkOption {
-                        type = lib.types.listOf lib.types.str;
-                        default = [];
-                    };
-
-                    autoStart = lib.mkOption {
-                        type = lib.types.bool;
-                        default = true;
-                    };
-                    
+                autoStart = lib.mkOption {
+                    type = lib.types.bool;
+                    default = true;
                 };
-            }));
-        };
 
+                targetName = lib.mkOption {
+                    type = lib.types.str;
+                    default = "${name}-root";
+                };
+
+                networks = lib.mkOption {
+                    default = {};
+                    type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
+                        options = {
+                            name = lib.mkOption {
+                                type = lib.types.str;
+                                default = name;
+                            };
+
+                            serviceName = lib.mkOption {
+                                type = lib.types.str;
+                                default = "podman-network-${name}";
+                            };
+
+                            disableDNS = lib.mkOption {
+                                type = lib.types.bool;
+                                default = false;
+                            };
+                        };
+                    }));
+                };
+
+                volumes = lib.mkOption {
+                    default = {};
+                    type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
+                        options = {
+                            name = lib.mkOption {
+                                type = lib.types.str;
+                                default = name;
+                            };
+
+                            serviceName = lib.mkOption {
+                                type = lib.types.str;
+                                default = "podman-volume-${name}";
+                            };
+                        };
+                    }));
+                };
+
+                containers = lib.mkOption {
+                    default = [];
+                    type = lib.types.listOf lib.types.str;
+                };
+            };
+
+        }));
     };
 
-    config = lib.mkIf (cfg.networks != {} || cfg.rootTargets != {} || cfg.volumes != {}) 
+    config = lib.mkIf (containerGroups != {})
     {
 
         virtualisation.podman = {
@@ -203,17 +174,11 @@ in
 
         virtualisation.oci-containers.backend = "podman";
 
-        systemd.services = lib.mkMerge (
-            (map mkNetwork networks)
-            ++ (map mkNetworkServicePatches networks)
-            ++ (map mkVolume volumes)
-            ++ (map mkVolumeServicePatches volumes)
-            ++ (map mkRootTargetServicePatches rootTargets)
-        );
+        systemd.services = lib.mkMerge (map mkServices containerGroups);
 
-        systemd.targets = lib.mkMerge (map mkRootTarget rootTargets);
+        systemd.targets = lib.mkMerge (map mkRootTarget containerGroups);
 
-        virtualisation.oci-containers.containers = lib.mkMerge (map mkRootTargetOciContainerPatches rootTargets);
+        virtualisation.oci-containers.containers = lib.mkMerge (map mkOciContainerRootTargetPatches containerGroups);
 
     };
 
