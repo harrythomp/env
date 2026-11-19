@@ -1,4 +1,4 @@
-{ self, ... }@inputs: { config, lib, ... }:
+{ self, ... }@inputs: { config, lib, pkgs, ... }:
 
 {
 
@@ -19,7 +19,7 @@
     ];
 
     boot = {
-        tmp.useTmpfs = true;
+        kernelPackages = lib.mkForce pkgs.linuxPackages;
         kernelParams = [
             "console=ttyS0,115200n8"
             "console=ttyAMA0,115200n8"

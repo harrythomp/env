@@ -21,6 +21,8 @@ let
             '';
             partOf = [ "${targetName}.target" ];
             wantedBy = [ "${targetName}.target" ];
+            requires = [ "linger-users.service" ];
+            after = [ "linger-users.service" ];
         };
     };
 
@@ -38,6 +40,8 @@ let
             '';
             partOf = [ "${targetName}.target" ];
             wantedBy = [ "${targetName}.target" ];
+            requires = [ "linger-users.service" ];
+            after = [ "linger-users.service" ];
         };
     };
 
