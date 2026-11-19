@@ -164,7 +164,7 @@ in
         }));
     };
 
-    config = lib.mkIf (containerGroups != {})
+    config = lib.mkIf (containerGroups != [])
     {
 
         virtualisation.podman = {
