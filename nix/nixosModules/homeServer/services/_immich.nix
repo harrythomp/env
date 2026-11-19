@@ -70,7 +70,7 @@ in
 
         envLocation = lib.mkOption {
             type = lib.types.str;
-            default = "${cfg.serviceLocation}/.env";
+            default = "${cfg.serviceLocation}/env";
         };
 
         backupLocations = lib.mkOption {
