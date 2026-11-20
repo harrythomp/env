@@ -35,6 +35,7 @@ thickness = 32
 contact_shadow = false
 concave_edge_corners = false
 margin_edge = 6
+radius = 10
 
 [[bar.default.capsule_group]]
 id = "sysmon"
