@@ -1,11 +1,9 @@
 inputs: { pkgs, ... }:
 
+let
+    unstable-pkgs = import inputs.nixpkgs-unstable { system = pkgs.stdenv.hostPlatform.system; };
+in
 {
-
-    nix.settings = {
-        extra-substituters = [ "https://noctalia.cachix.org" ];
-        extra-trusted-public-keys = [ "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=" ];
-    };
 
     environment.systemPackages = with pkgs; [
         fuzzel
@@ -23,8 +21,8 @@ inputs: { pkgs, ... }:
         flameshot
         wooz
         antimicrox
-    ] ++ [
-        inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-    ];
+    ] ++ (with unstable-pkgs; [
+        noctalia
+    ]);
 
 }

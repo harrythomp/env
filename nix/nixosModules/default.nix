@@ -25,6 +25,7 @@
         self.nixosModules.desktopTools
 
         self.nixosModules.niri
+        self.nixosModules.umbriel
         self.nixosModules.waylandWMExtras
         self.nixosModules.icons
 

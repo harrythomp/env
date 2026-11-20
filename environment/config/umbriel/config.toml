@@ -1,0 +1,213 @@
+[include]
+files = []
+
+[include.optional]
+files = ["matugen.toml"]
+
+[general]
+autostart = [
+    "noctalia",
+    "udiskie",
+    "vicinae server",
+    "systemctl start --user app-com.mitchellh.ghostty.service",
+    "nm-applet"
+]
+show_cheatsheet = false
+
+[keybinds]
+# Apps
+"Mod+T" = "spawn ghostty +new-window"
+"Mod+Space" = "spawn vicinae toggle"
+"Mod+B" = "spawn firefox"
+"Mod+Shift+B" = "spawn SELECTOR=vicinae select-firefox-profile"
+"Mod+C" = "spawn gnome-calculator"
+
+# Tools
+"Mod+S" = "spawn dots switch"
+"Mod+P" = "spawn noctalia msg screenshot-region"
+"Mod+Shift+P" = "spawn hyprpicker -a"
+"Mod+Ctrl+P" = "spawn noctalia msg screenshot-fullscreen pick"
+"Mod+N" = "spawn noctalia msg panel-toggle control-center notifications"
+"Mod+Shift+S" = "spawn SELECTOR=vicinae select-overlay"
+"Mod+Period" = "spawn vicinae vicinae://launch/core/search-emojis"
+"Mod+Z" = "spawn wooz --invert-scroll"
+
+# Exit
+"Mod+E" = "spawn noctalia msg session lock"
+"Mod+Shift+E" = "spawn noctalia msg session lock-and-suspend"
+"Mod+M" = "spawn ssh-add -D && umbriel msg session-quit"
+
+# Audio
+"XF86AudioRaiseVolume" = "spawn wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+"
+"XF86AudioLowerVolume" = "spawn wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"
+"XF86AudioMute" = "spawn wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+"XF86AudioMicMute" = "spawn wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+# Playback
+"XF86AudioPlay" = "spawn playerctl play-pause"
+"XF86AudioStop" = "spawn playerctl stop"
+"XF86AudioPrev" = "spawn playerctl previous"
+"XF86AudioNext" = "spawn playerctl next"
+
+# Brightness
+"XF86MonBrightnessUp" = "spawn brightnessctl --class=backlight set +5%"
+"XF86MonBrightnessDown" = "spawn brightnessctl --class=backlight set 5%-"
+
+# Umbriel
+
+"Mod+O" = { action = "overview-toggle", repeat = false }
+"Mod+Q" = { action = "window-close", repeat = false }
+
+"Mod+Tab" = "column-focus-tab-next"
+
+"Mod+H" = "window-focus-or-output-left"
+"Mod+U" = "window-focus-or-output-down"
+"Mod+I" = "window-focus-or-output-up"
+"Mod+L" = "window-focus-or-output-right"
+"Mod+Shift+H" = "window-move-or-output-left"
+"Mod+Shift+U" = "window-move-or-output-down"
+"Mod+Shift+I" = "window-move-or-output-up"
+"Mod+Shift+L" = "window-move-or-output-right"
+
+"Mod+J" = "workspace-next"
+"Mod+K" = "workspace-previous"
+"Mod+Shift+J" = "column-move-to-workspace-next"
+"Mod+Shift+K" = "column-move-to-workspace-previous"
+
+"Mod+Ctrl+J" = "workspace-move-down"
+"Mod+Ctrl+K" = "workspace-move-up"
+
+"Mod+WheelDown" = { action = "window-focus-right", cooldown_ms = 150 }
+"Mod+WheelUp" = { action = "window-focus-left", cooldown_ms = 150 }
+
+"Mod+1" = "workspace-switch 1"
+"Mod+2" = "workspace-switch 2"
+"Mod+3" = "workspace-switch 3"
+"Mod+4" = "workspace-switch 4"
+"Mod+5" = "workspace-switch 5"
+"Mod+6" = "workspace-switch 6"
+"Mod+7" = "workspace-switch 7"
+"Mod+8" = "workspace-switch 8"
+"Mod+9" = "workspace-switch 9"
+"Mod+Shift+1" = "column-move-to-workspace 1"
+"Mod+Shift+2" = "column-move-to-workspace 2"
+"Mod+Shift+3" = "column-move-to-workspace 3"
+"Mod+Shift+4" = "column-move-to-workspace 4"
+"Mod+Shift+5" = "column-move-to-workspace 5"
+"Mod+Shift+6" = "column-move-to-workspace 6"
+"Mod+Shift+7" = "column-move-to-workspace 7"
+"Mod+Shift+8" = "column-move-to-workspace 8"
+"Mod+Shift+9" = "column-move-to-workspace 9"
+
+"Mod+BracketLeft" = "window-consume-or-expel-left"
+"Mod+BracketRight" = "window-consume-or-expel-right"
+
+"Mod+R" = "window-cycle-primary-extent"
+"Mod+F" = "window-toggle-maximize"
+"Mod+Shift+F" = "window-toggle-fullscreen"
+
+"Mod+Left" = "window-modify-width-right -0.1"
+"Mod+Right" = "window-modify-width-right +0.1"
+"Mod+Up" = "window-modify-height-down -0.1"
+"Mod+Down" = "window-modify-height-down +0.1"
+
+"Mod+V" = "window-toggle-floating"
+"Mod+Shift+V" = "window-focus-switch-floating"
+"Mod+X" = "window-toggle-pinned"
+
+"Mod+G" = "column-toggle-tabbed"
+
+"Mod+D" = "workspace-set-layout toggle scrolling dwindle"
+
+[input.keyboard]
+layout = "gb"
+numlock_toggle = true
+
+[input.touchpad]
+tap = true
+natural_scroll = true
+
+[appearance]
+prefer_no_csd = true
+border_width = 2
+outer_border_width = 0
+corner_radius = 10
+drag_opacity = 0.75
+opaque_fullscreen = true
+
+[appearance.tab_bar]
+position = "top"
+style = "indicator"
+height = 8
+
+[appearance.blur]
+enabled = true
+optimized = true
+passes = 2
+radius = 3
+noise = 0.02
+brightness = 0.9
+contrast = 0.9
+saturation = 1.1
+
+[appearance.shadow]
+enabled = true
+softness = 30
+
+[overview]
+zoom = 0.6
+background_blur = true
+workspace_wallpaper = true
+shortcuts = false
+
+[layout]
+mode = "scrolling" # "scrolling", "dwindle", "master", or "stacking".
+extent_presets = [0.333, 0.5, 0.667]
+gap = 8
+
+[layout.scrolling]
+default_extent_fraction = 1
+
+[[window_rule]]
+blur = true
+
+[[window_rule]]
+match.app_id = "^dev.noctalia.Noctalia$"
+default_floating = true
+default_floating_size_px = { width = 1020, height = 900 }
+
+[[window_rule]]
+match.app_id = "^dev.noctalia.UmbrielSharePicker$"
+default_floating = true
+default_floating_size_px = { width = 800, height = 600 }
+
+[[window_rule]]
+match.title = "^(Picture-in-Picture|Picture in picture)$"
+default_floating = true
+default_maximize = false
+default_position = { x = 20, y = 20, anchor = "bottom_right" }
+
+[[window_rule]]
+match.title = "^notificationtoasts_.+_desktop"
+default_position = { x = 0, y = 0, anchor = "bottom_right" }
+default_focused = false
+default_pinned = true
+
+[[window_rule]]
+match.app_id = "org.gnome.Calculator"
+default_floating = true
+
+[[layer_rule]]
+match.namespace = "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd|desktop-widget-[^\"]*)$"
+blur = true
+blur_ignore_alpha = 0.5
+blur_popups = true
+
+[[layer_rule]]
+match.namespace = "^noctalia-(notification|dock|panel|attached-panel|osd)$"
+blur_optimized = false
+
+[hot_corners.top_left]
+enabled = true
+delay_ms = 0
+action = "overview-open"
