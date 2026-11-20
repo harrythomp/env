@@ -129,7 +129,7 @@ natural_scroll = true
 
 [appearance]
 prefer_no_csd = true
-border_width = 2
+border_width = 0
 outer_border_width = 0
 corner_radius = 10
 drag_opacity = 0.75
@@ -163,7 +163,7 @@ shortcuts = false
 [layout]
 mode = "scrolling" # "scrolling", "dwindle", "master", or "stacking".
 extent_presets = [0.333, 0.5, 0.667]
-gap = 8
+gap = 6
 
 [layout.scrolling]
 default_extent_fraction = 1

@@ -33,6 +33,8 @@ scale = 0.95
 widget_spacing = 10
 thickness = 32
 contact_shadow = false
+concave_edge_corners = false
+margin_edge = 6
 
 [[bar.default.capsule_group]]
 id = "sysmon"
@@ -68,6 +70,9 @@ clipboard_keep_from_closed_apps = false
 corner_radius_scale = 1.5
 font_family = "Noto Sans"
 password_style = "random"
+button_borders = false
+card_borders = false
+input_borders = false
 
 [shell.panel]
 borders = false
@@ -82,6 +87,9 @@ open_near_click_session = true
 [shell.screenshot]
 confirm_region = true
 save_to_file = false
+
+[shell.shadow]
+alpha = 0.3
 
 [theme]
 custom_palette = "matugen"
@@ -115,7 +123,7 @@ show_active_indicator = false
 
 [widget.tray]
 drawer = true
-drawer_item_size = 18.0
+drawer_item_size = 14.0
 scale = 1
 detached_panel = false
 
