@@ -10,6 +10,11 @@ inputs: { pkgs, lib, config, ... }:
         user = lib.mkOption {
             type = lib.types.str;
         };
+
+        firewallInterfaces = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+        };
     };
 
     config = {
@@ -62,6 +67,20 @@ inputs: { pkgs, lib, config, ... }:
                 ];
             };
         };
+
+        networking.firewall.interfaces = lib.genAttrs cfg.firewallInterfaces (_: {
+            allowedTCPPorts = [
+                47984 # web server
+                47989 # web server
+                48010 # stream
+            ];
+            allowedUDPPorts = [
+                # 5353 # moonshine has an embedded mDNS responder that does not conflict with avahi
+                47998 # video stream
+                47999 # control stream
+                48000 # audio stream
+            ];
+        });
 
     };
 

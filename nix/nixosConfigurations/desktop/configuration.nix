@@ -16,7 +16,10 @@
     ];
 
     env = {
-        moonshine.user = "harry";
+        moonshine = {
+            user = "harry";
+            firewallInterfaces = [ "eno1" ];
+        };
         homeServer = {
             services = {
                 syncthing = {
