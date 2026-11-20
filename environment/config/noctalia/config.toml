@@ -36,6 +36,8 @@ contact_shadow = false
 concave_edge_corners = false
 margin_edge = 6
 radius = 10
+border = "surface_container_highest"
+border_width = 0
 
 [[bar.default.capsule_group]]
 id = "sysmon"
@@ -43,6 +45,14 @@ members = [ "sysmon", "ram", "cpu" ]
 widget_spacing = 6
 padding = 1
 opacity = 0
+
+[notification]
+border_color = "surface_container_highest"
+border_width = 1.5
+
+[osd]
+border_color = "surface_container_highest"
+border_width = 1.5
 
 [[control_center.shortcuts]]
 type = "wifi"
@@ -71,8 +81,8 @@ clipboard_keep_from_closed_apps = false
 corner_radius_scale = 1.5
 font_family = "Noto Sans"
 password_style = "random"
-button_borders = false
-card_borders = false
+button_borders = true
+card_borders = true
 input_borders = false
 
 [shell.panel]
