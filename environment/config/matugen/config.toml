@@ -23,11 +23,11 @@ output_path = "~/.config/gtk-3.0/gtk.css"
 input_path = "~/.config/matugen/templates/gtk/gtk4.css"
 output_path = "~/.config/gtk-4.0/gtk.css"
 
-[templates.fuzzel_0]
+[templates.fuzzel]
 input_path = "~/.config/matugen/templates/fuzzel/fuzzel.conf"
 output_path = "~/.config/fuzzel/themes/matugen"
 
-[templates.vicinae_0]
+[templates.vicinae]
 input_path = "~/.config/matugen/templates/vicinae/vicinae.toml"
 output_path = "~/.local/share/vicinae/themes/matugen.toml"
 post_hook = "pgrep vicinae && vicinae theme set matugen"
@@ -36,14 +36,18 @@ post_hook = "pgrep vicinae && vicinae theme set matugen"
 input_path = "~/.config/matugen/templates/vesktop/midnight.css"
 output_path = "~/.config/vesktop/themes/matugen.theme.css"
 
-[templates.cava_0]
+[templates.cava]
 input_path = "~/.config/matugen/templates/cava/cava.ini"
 output_path = "~/.config/cava/themes/matugen"
 
-[templates.yazi_0]
+[templates.yazi]
 input_path = "~/.config/matugen/templates/yazi/yazi.toml"
 output_path = "~/.config/yazi/flavors/matugen.yazi/flavor.toml"
 
-[templates.niri_0]
+[templates.niri]
 input_path = "~/.config/matugen/templates/niri/niri.kdl"
 output_path = "~/.config/niri/matugen.kdl"
+
+[templates.umbriel]
+input_path = "~/.config/matugen/templates/umbriel/umbriel.toml"
+output_path = "~/.config/umbriel/matugen.toml"

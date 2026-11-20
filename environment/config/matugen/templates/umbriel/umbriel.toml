@@ -1,0 +1,15 @@
+[colors]
+accent_primary = "{{colors.primary.default.hex}}"
+error = "{{colors.error.default.hex}}"
+insert_hint = "{{colors.primary.default.hex}}80"
+shadow = "{{colors.shadow.default.hex}}70"
+
+[colors.border]
+focused = "{{colors.primary.default.hex}}"
+unfocused = "{{colors.surface.default.hex}}"
+
+[colors.tab_bar]
+background = "{{colors.primary_container.default.hex}}"
+active = "{{colors.primary.default.hex}}"
+active_unfocused = "{{colors.primary_container.default.hex}}"
+urgent = "{{colors.error.default.hex}}"

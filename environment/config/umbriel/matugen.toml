@@ -1,0 +1,47 @@
+# Neutral colors until Matugen generates a wallpaper-based palette.
+[colors]
+background = "#1C1C1C"
+text_primary = "#E8E8E8"
+text_muted = "#999999"
+accent_primary = "#C8C8C8"
+accent_secondary = "#AAAAAA"
+warning = "#BBBBBB"
+error = "#D0D0D0"
+insert_hint = "#C8C8C880"
+backdrop = "#101010"
+shadow = "#00000070"
+
+[colors.border]
+focused = "#C8C8C8"
+unfocused = "#303030"
+outer = "#242424"
+
+[colors.overview]
+background_tint = "#10101030"
+workspace_background = "#00000044"
+badge = "#C8C8C8"
+
+[colors.tab_bar]
+background = "#303030"
+text = "#AAAAAA"
+active = "#C8C8C8"
+active_text = "#1C1C1C"
+active_unfocused = "#555555"
+active_unfocused_text = "#E8E8E8"
+urgent = "#D0D0D0"
+urgent_text = "#1C1C1C"
+
+[colors.title_bar]
+background = "#303030"
+background_unfocused = "#242424"
+text = "#E8E8E8"
+text_unfocused = "#999999"
+close = "#D0D0D0"
+close_glyph = "#1C1C1C"
+close_glyph_hover = "#1C1C1C"
+maximize = "#C8C8C8"
+maximize_glyph = "#1C1C1C"
+maximize_glyph_hover = "#1C1C1C"
+minimize = "#AAAAAA"
+minimize_glyph = "#1C1C1C"
+minimize_glyph_hover = "#1C1C1C"
