@@ -142,7 +142,7 @@ height = 8
 
 [appearance.blur]
 enabled = true
-optimized = true
+optimized = false
 passes = 2
 radius = 3
 noise = 0.02
