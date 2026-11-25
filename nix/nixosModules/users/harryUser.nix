@@ -5,7 +5,7 @@ inputs: { pkgs, ... }:
     users.users.harry = {
         isNormalUser = true;
         description = "Harry";
-        extraGroups = [ "networkmanager" "wheel" "docker" ];
+        extraGroups = [ "networkmanager" "wheel" ];
         shell = pkgs.fish;
         initialHashedPassword = "$y$j9T$tuXXZtOwfIv6kMkB8dZ811$Gelp7AZRKuI3D9XeneUBHEC9dh3lTZi4QfTardqIth6";
         openssh.authorizedKeys.keys = [
