@@ -2,6 +2,12 @@ inputs:
 
 {
 
-    virtualisation.docker.enable = true;
+    virtualisation.docker = {
+        enable = false;
+        rootless = {
+            enable = true;
+            setSocketVariable = true;
+        };
+    };
 
 }
