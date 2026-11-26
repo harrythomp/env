@@ -1,6 +1,7 @@
 { config, lib, ... }:
 
 let
+    defaultUser = "syncthing";
     cfg = config.env.homeServer.services.syncthing;
     allDevices = builtins.attrNames config.services.syncthing.settings.devices;
     enableFor = devices: builtins.elem config.networking.hostName devices;
@@ -38,7 +39,7 @@ in
 
         user = lib.mkOption {
             type = lib.types.str;
-            default = "syncthing";
+            default = defaultUser;
         };
 
     };
@@ -86,6 +87,7 @@ in
                 };
             };
             user = cfg.user;
+            group = lib.mkIf (cfg.user != defaultUser) config.users.users.${cfg.user}.group;
             dataDir = cfg.serviceLocation;
             configDir = "${cfg.serviceLocation}/.local/state/syncthing";
             key = "/run/secrets/syncthing-key";
